@@ -7,7 +7,7 @@ const AuthCarousel = ({ carouselItems }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselItems.length);
-    }, 5000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [carouselItems.length]);

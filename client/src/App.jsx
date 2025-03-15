@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import Landing from "./pages/Landing";
 import UserDashboard from "./pages/UserDashboard";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 function App() {
   const router = createBrowserRouter([
@@ -12,6 +13,7 @@ function App() {
     { path: "/signup", element: <Signup /> },
     { path: "/user/dashboard", element: <UserDashboard /> },
     { path: "/user/profile", element: <Profile /> },
+    { path: "/user/settings", element: <Settings /> },
   ]);
   return (
     <>

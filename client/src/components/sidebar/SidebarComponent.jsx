@@ -4,6 +4,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { cn } from "./utils";
 import DesktopSidebarContent from "./DesktopSidebarContent";
 import MobileSidebarContent from "./MobileSidebarContent";
+import { useLocation } from "react-router-dom";
 
 const SidebarComponent = ({
   open,
@@ -14,6 +15,8 @@ const SidebarComponent = ({
   handleLogout,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   // Check if viewport is mobile
   useEffect(() => {
@@ -22,6 +25,12 @@ const SidebarComponent = ({
     window.addEventListener("resize", checkIsMobile);
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
+
+  // Update links with active state based on current path
+  const linksWithActive = links.map((link) => ({
+    ...link,
+    active: currentPath === link.href,
+  }));
 
   return (
     <>
@@ -62,7 +71,7 @@ const SidebarComponent = ({
               <FiX className="h-6 w-6" />
             </div>
             <MobileSidebarContent
-              links={links}
+              links={linksWithActive}
               userName={userName}
               userInitials={userInitials}
               handleLogout={handleLogout}
@@ -87,7 +96,7 @@ const SidebarComponent = ({
       >
         <DesktopSidebarContent
           open={open}
-          links={links}
+          links={linksWithActive}
           userName={userName}
           userInitials={userInitials}
           handleLogout={handleLogout}

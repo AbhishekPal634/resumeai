@@ -5,12 +5,12 @@ import TokenDisplay from "./TokenDisplay";
 const WelcomeHeader = ({ userName = "John", tokens }) => {
   return (
     <motion.div
-      className="flex flex-col md:flex-row md:items-center justify-between"
+      className="flex flex-row items-start justify-between w-full"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div>
+      <div className="flex-1">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">
           Welcome back, {userName}!
         </h1>
@@ -18,7 +18,9 @@ const WelcomeHeader = ({ userName = "John", tokens }) => {
           Let's build your professional resume today
         </p>
       </div>
-      <TokenDisplay tokens={tokens} />
+      <div className="flex-shrink-0 ml-4">
+        <TokenDisplay tokens={tokens} />
+      </div>
     </motion.div>
   );
 };

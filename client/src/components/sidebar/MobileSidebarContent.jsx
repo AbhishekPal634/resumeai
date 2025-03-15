@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const MobileSidebarContent = ({
   links,
@@ -8,51 +9,51 @@ const MobileSidebarContent = ({
   handleLogout,
   setOpen,
 }) => {
-  return (
-    <div className="flex flex-col h-full justify-between pt-12">
-      <div>
-        <div className="flex items-center mb-8">
-          <img
-            src="/logo.svg"
-            alt="ResumeAI Logo"
-            className="h-10 w-10 object-contain"
-          />
-          <span className="ml-3 font-bold text-xl text-white">
-            Resume<span className="text-indigo-400">AI</span>
-          </span>
-        </div>
+  // Separate regular links and logout link
+  const navigationLinks = links.filter((link) => link.href !== "/");
 
-        <div className="flex flex-col gap-3">
-          {links.map((link, idx) => (
-            <Link
-              key={idx}
-              to={link.href}
-              onClick={(e) => {
-                if (link.label === "Logout" && handleLogout) {
-                  e.preventDefault();
-                  handleLogout();
-                }
-                setOpen(false);
-              }}
-              className="flex items-center gap-4 px-2 py-3 rounded-lg transition-colors text-slate-300 hover:bg-slate-800/50"
-            >
-              <div className="w-6 h-6">{link.icon}</div>
-              <span className="text-base">{link.label}</span>
-            </Link>
-          ))}
+  return (
+    <div className="flex flex-col h-full pt-12">
+      {/* User Profile */}
+      <div className="flex items-center mt-4 mb-8">
+        <div className="h-12 w-12 rounded-full bg-indigo-600 flex items-center justify-center text-white text-lg font-medium">
+          {userInitials}
+        </div>
+        <div className="ml-4">
+          <h3 className="text-lg font-semibold text-white">{userName}</h3>
+          <button className="text-red-400 text-sm" onClick={handleLogout}>
+            Sign out
+          </button>
         </div>
       </div>
 
-      <div className="mb-8">
-        <div className="flex items-center gap-3 px-2 py-4 rounded-lg bg-slate-800/50">
-          <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center text-white text-base font-medium">
-            {userInitials}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-medium text-white">{userName}</span>
-            <span className="text-sm text-slate-400">Free Plan</span>
-          </div>
-        </div>
+      {/* Navigation Links */}
+      <nav className="mt-4 flex-1">
+        <ul className="space-y-3">
+          {navigationLinks.map((link, idx) => (
+            <motion.li key={idx} whileTap={{ scale: 0.97 }}>
+              <Link
+                to={link.href}
+                className={`flex items-center px-3 py-3 text-base rounded-lg ${
+                  link.active
+                    ? "bg-indigo-900/50 text-white font-medium" // Active state styling
+                    : "text-gray-300 hover:bg-gray-800"
+                }`}
+                onClick={() => setOpen(false)}
+              >
+                <div className={link.active ? "text-indigo-400" : ""}>
+                  {link.icon}
+                </div>
+                <span className="ml-3">{link.label}</span>
+              </Link>
+            </motion.li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* App Info */}
+      <div className="mt-auto pt-6 pb-4">
+        <p className="text-gray-500 text-sm">ResumeAI v1.0.0</p>
       </div>
     </div>
   );

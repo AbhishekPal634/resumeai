@@ -16,6 +16,7 @@ function App() {
     { path: "/user/dashboard", element: <UserDashboard /> },
     { path: "/user/profile", element: <Profile /> },
     { path: "/user/settings", element: <Settings /> },
+    { path: "/resume/new", element: <ResumeEditor /> },
     { path: "/resume/edit/:id", element: <ResumeEditor /> },
     { path: "/resume/templates", element: <TemplateSelector /> },
   ]);

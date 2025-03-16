@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ResumeEditorLayout from "../components/layouts/ResumeEditorLayout";
 import ChatbotAssistant from "../components/editor/ChatbotAssistant";
 import TemplateRenderer from "../components/editor/TemplateRenderer";
 import ResumePDF from "../utils/ResumePDF";
 import { dummyResume } from "../data/dummyResume";
+import { getPDFTemplate } from "../components/templates/resume/templateRegistry";
 
 const ResumeEditorPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const templateId = searchParams.get("template") || "modern";
+
   const [resume, setResume] = useState(dummyResume);
   const [resumeName, setResumeName] = useState("My Resume");
   const [isSaving, setIsSaving] = useState(false);
@@ -64,11 +68,11 @@ const ResumeEditorPage = () => {
       }
     >
       <div>
-        <TemplateRenderer resume={resume} templateId="modern" />
+        <TemplateRenderer resume={resume} templateId={templateId} />
         <div className="hidden">
           <PDFDownloadLink
             id="pdf-download"
-            document={<ResumePDF resume={resume} templateId="modern" />}
+            document={<ResumePDF resume={resume} templateId={templateId} />}
             fileName={`${resumeName.replace(/\s+/g, "-").toLowerCase()}.pdf`}
           >
             {({ loading }) => (loading ? "Preparing PDF..." : "Download")}

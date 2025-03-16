@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   FaRobot,
   FaArrowLeft,
@@ -47,15 +48,15 @@ export default function ResumeEditorLayout({
       {/* Refined Header */}
       <header className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 py-3 px-4 z-10 flex-shrink-0">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <button
-            onClick={onBack}
+          <Link
+            to="/user/dashboard"
             className="flex items-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
           >
             <FaArrowLeft className="mr-2" />
             <span className="font-medium hidden sm:inline">
               Back to Dashboard
             </span>
-          </button>
+          </Link>
 
           <div className="flex items-center space-x-3">
             <div className="relative hidden sm:block">

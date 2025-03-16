@@ -68,7 +68,7 @@ const TemplateSelector = () => {
                           {template.name}
                         </h3>
                         <Link
-                          to={`/resume/edit/${id}?template=modern`}
+                          to={`/resume/new?template=${id}`}
                           className="inline-flex items-center text-sm text-indigo-400 hover:text-indigo-300"
                         >
                           Use Template

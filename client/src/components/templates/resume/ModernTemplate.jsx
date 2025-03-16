@@ -158,7 +158,7 @@ const ModernTemplate = ({ resume }) => {
 
         {/* Projects Section */}
         {projects.length > 0 && (
-          <Section title="Notable Projects">
+          <Section title="Projects">
             {projects.map((project, index) => (
               <div key={index} className="mb-3 last:mb-0">
                 <h3 className="text-sm font-semibold text-gray-900 mb-2">

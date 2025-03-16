@@ -196,6 +196,44 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: "#374151",
   },
+  certificationItem: {
+    marginBottom: 6,
+  },
+  awardItem: {
+    marginBottom: 6,
+  },
+  awarderText: {
+    fontSize: 9,
+    color: "#4B5563",
+  },
+  awardSummary: {
+    fontSize: 9,
+    color: "#374151",
+    marginTop: 2,
+  },
+  publicationItem: {
+    marginBottom: 6,
+  },
+  publisherText: {
+    fontSize: 9,
+    color: "#4B5563",
+  },
+  languageSection: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  languageItem: {
+    fontSize: 9,
+    color: "#374151",
+  },
+  languageLevel: {
+    fontSize: 9,
+    color: "#6B7280",
+  },
+  volunteerItem: {
+    marginBottom: 8,
+  },
 });
 
 const ContactText = ({ icon, children }) => (
@@ -215,7 +253,18 @@ const SkillCategory = ({ title, skills }) => (
 );
 
 const ModernPDF = ({ resume }) => {
-  const { basics, skills, work, education, projects } = resume;
+  const {
+    basics,
+    skills,
+    work,
+    education,
+    projects,
+    certifications,
+    awards,
+    publications,
+    languages,
+    volunteer,
+  } = resume;
 
   const skillCategories = {
     "Programming Languages": skills.programmingLanguages || [],
@@ -307,7 +356,7 @@ const ModernPDF = ({ resume }) => {
 
           {projects?.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Notable Projects</Text>
+              <Text style={styles.sectionTitle}>Projects</Text>
               {projects.map((project, index) => (
                 <View key={index} style={{ marginBottom: 12 }}>
                   <Text style={styles.jobTitle}>{project.name}</Text>
@@ -345,6 +394,93 @@ const ModernPDF = ({ resume }) => {
                     </Text>
                   </View>
                   {edu.gpa && <Text style={styles.gpa}>GPA: {edu.gpa}</Text>}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {certifications?.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Certifications</Text>
+              {certifications.map((cert, index) => (
+                <View key={index} style={styles.certificationItem}>
+                  <View style={styles.jobHeader}>
+                    <Text style={styles.jobTitle}>{cert.name}</Text>
+                    <Text style={styles.dates}>{cert.date}</Text>
+                  </View>
+                  <Text style={styles.jobCompany}>{cert.issuer}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {awards?.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Awards & Achievements</Text>
+              {awards.map((award, index) => (
+                <View key={index} style={styles.awardItem}>
+                  <View style={styles.jobHeader}>
+                    <Text style={styles.jobTitle}>{award.title}</Text>
+                    <Text style={styles.dates}>{award.date}</Text>
+                  </View>
+                  <Text style={styles.awarderText}>{award.awarder}</Text>
+                  {award.summary && (
+                    <Text style={styles.awardSummary}>{award.summary}</Text>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {publications?.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Publications</Text>
+              {publications.map((pub, index) => (
+                <View key={index} style={styles.publicationItem}>
+                  <Text style={styles.jobTitle}>{pub.name}</Text>
+                  <Text style={styles.publisherText}>{pub.publisher}</Text>
+                  <Text style={styles.dates}>{pub.releaseDate}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {languages?.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Languages</Text>
+              <View style={styles.languageSection}>
+                {languages.map((lang, index) => (
+                  <Text key={index} style={styles.languageItem}>
+                    <Text style={{ fontWeight: 600 }}>{lang.language}</Text>
+                    {lang.fluency && (
+                      <Text style={styles.languageLevel}>
+                        {" "}
+                        - {lang.fluency}
+                      </Text>
+                    )}
+                  </Text>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {volunteer?.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Volunteer Experience</Text>
+              {volunteer.map((vol, index) => (
+                <View key={index} style={styles.volunteerItem}>
+                  <View style={styles.jobHeader}>
+                    <View>
+                      <Text style={styles.jobTitle}>{vol.position}</Text>
+                      <Text style={styles.jobCompany}>{vol.organization}</Text>
+                    </View>
+                    <Text style={styles.dates}>
+                      {vol.startDate} - {vol.endDate || "Present"}
+                    </Text>
+                  </View>
+                  {vol.summary && (
+                    <Text style={styles.summary}>{vol.summary}</Text>
+                  )}
                 </View>
               ))}
             </View>

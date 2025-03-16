@@ -6,6 +6,7 @@ import UserDashboard from "./pages/UserDashboard";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ResumeEditor from "./pages/ResumeEditor";
+import TemplateSelector from "./pages/TemplateSelector";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,6 +17,7 @@ function App() {
     { path: "/user/profile", element: <Profile /> },
     { path: "/user/settings", element: <Settings /> },
     { path: "/resume/edit/:id", element: <ResumeEditor /> },
+    { path: "/resume/templates", element: <TemplateSelector /> },
   ]);
   return (
     <>

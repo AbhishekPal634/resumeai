@@ -13,7 +13,7 @@ const Section = ({ title, children }) => (
 const SkillCategory = ({ title, skills }) => (
   <div className="mb-[2px] last:mb-0">
     <span className="font-bold text-[11px]">{title}: </span>
-    <span className="text-[11px]">{skills.join(" • ")}</span>
+    <span className="text-[11px]">{skills.join(", ")}</span>
   </div>
 );
 
@@ -21,10 +21,9 @@ const ClassicTemplate = ({ resume }) => {
   const {
     basics,
     skills,
-    work,
+    experience, // Changed from work
     education,
     projects,
-    certifications,
     awards,
     publications,
     languages,
@@ -90,31 +89,36 @@ const ClassicTemplate = ({ resume }) => {
 
       {/* Experience */}
       <Section title="Experience">
-        {work?.map((job, index) => (
-          <div key={index} className="mb-3 last:mb-0">
-            <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-[11px] text-gray-900">
-                {job.position}
-              </h3>
-              <div className="text-[11px] text-gray-800">
-                {job.startDate} – {job.endDate || "Present"}
+        {experience?.map(
+          (
+            job,
+            index // Changed from work
+          ) => (
+            <div key={index} className="mb-3 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-bold text-[11px] text-gray-900">
+                  {job.position}
+                </h3>
+                <div className="text-[11px] text-gray-800">
+                  {job.startDate} – {job.endDate || "Present"}
+                </div>
               </div>
+              <div className="flex justify-between items-baseline italic">
+                <div className="text-[11px] text-gray-700">{job.company}</div>
+                <div className="text-[11px] text-gray-700">{job.location}</div>
+              </div>
+              {job.highlights && (
+                <ul className="list-disc list-outside ml-5 mt-1 text-[11px] text-gray-800">
+                  {job.highlights.map((highlight, idx) => (
+                    <li key={idx} className="mb-1">
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            <div className="flex justify-between items-baseline italic">
-              <div className="text-[11px] text-gray-700">{job.company}</div>
-              <div className="text-[11px] text-gray-700">{job.location}</div>
-            </div>
-            {job.highlights && (
-              <ul className="list-disc list-outside ml-5 mt-1 text-[11px] text-gray-800">
-                {job.highlights.map((highlight, idx) => (
-                  <li key={idx} className="mb-1">
-                    {highlight}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
+          )
+        )}
       </Section>
 
       {/* Projects */}

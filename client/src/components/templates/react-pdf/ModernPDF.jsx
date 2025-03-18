@@ -256,11 +256,11 @@ const ModernPDF = ({ resume }) => {
   const {
     basics,
     skills,
-    work,
+    experience, // Changed from work
     education,
     projects,
-    certifications,
     awards,
+    certifications,
     publications,
     languages,
     volunteer,
@@ -326,26 +326,31 @@ const ModernPDF = ({ resume }) => {
             </View>
           )}
 
-          {work?.length > 0 && (
+          {/* Experience Section */}
+          {experience?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Professional Experience</Text>
-              {work.map((job, index) => (
-                <View key={index} style={styles.experienceItem}>
-                  <View style={styles.jobHeader}>
+              {experience.map((job, index) => (
+                <View
+                  key={index}
+                  style={[styles.itemContainer, styles.lastNoMargin]}
+                >
+                  <View style={styles.rowBetween}>
                     <View>
-                      <Text style={styles.jobTitle}>{job.position}</Text>
-                      <Text style={styles.jobCompany}>{job.company}</Text>
+                      <Text style={styles.bold}>{job.position}</Text>
+                      <Text style={styles.italic}>{job.company}</Text>
                     </View>
-                    <Text style={styles.dates}>
+                    <Text style={styles.date}>
                       {job.startDate} - {job.endDate || "Present"}
                     </Text>
                   </View>
                   {job.highlights && (
                     <View style={styles.bulletList}>
                       {job.highlights.map((highlight, idx) => (
-                        <Text key={idx} style={styles.bulletItem}>
-                          • {highlight}
-                        </Text>
+                        <View key={idx} style={styles.bulletItem}>
+                          <Text style={styles.bullet}>•</Text>
+                          <Text style={styles.bulletText}>{highlight}</Text>
+                        </View>
                       ))}
                     </View>
                   )}

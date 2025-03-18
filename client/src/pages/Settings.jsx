@@ -9,7 +9,8 @@ import PrivacySettings from "../components/settings/PrivacySettings";
 import PlanSettings from "../components/settings/PlanSettings";
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState("profile");
+  // Change default state to "security" since it's the default tab
+  const [activeTab, setActiveTab] = useState("security");
 
   const tabs = [
     { id: "security", label: "Security" },

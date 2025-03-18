@@ -48,16 +48,18 @@ const SkillCategory = ({ title, skills }) => (
 );
 
 const ModernTemplate = ({ resume }) => {
-  const basics = resume?.basics || {};
-  const work = resume?.work || [];
-  const education = resume?.education || [];
-  const skills = resume?.skills || {};
-  const projects = resume?.projects || [];
-  const awards = resume?.awards || [];
-  const certifications = resume?.certifications || [];
-  const publications = resume?.publications || [];
-  const languages = resume?.languages || [];
-  const volunteer = resume?.volunteer || [];
+  const {
+    basics,
+    skills,
+    experience, // Changed from work
+    education,
+    projects,
+    awards,
+    certifications,
+    publications,
+    languages,
+    volunteer,
+  } = resume;
 
   const skillCategories = {
     "Programming Languages": skills.programmingLanguages || [],
@@ -125,34 +127,39 @@ const ModernTemplate = ({ resume }) => {
           </Section>
         )}
 
-        {/* Work Experience Section */}
-        {work.length > 0 && (
+        {/* Experience Section */}
+        {experience.length > 0 && ( // Changed from work
           <Section title="Professional Experience">
-            {work.map((job, index) => (
-              <div key={index} className="mb-3 last:mb-0">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900">
-                      {job.position}
-                    </h3>
-                    <div className="text-sm text-gray-600">{job.company}</div>
+            {experience.map(
+              (
+                job,
+                index // Changed from work
+              ) => (
+                <div key={index} className="mb-3 last:mb-0">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">
+                        {job.position}
+                      </h3>
+                      <div className="text-sm text-gray-600">{job.company}</div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {job.startDate} - {job.endDate || "Present"}
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {job.startDate} - {job.endDate || "Present"}
-                  </div>
+                  {job.summary && (
+                    <p className="text-sm text-gray-700 mb-2">{job.summary}</p>
+                  )}
+                  {job.highlights && (
+                    <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
+                      {job.highlights.map((highlight, idx) => (
+                        <li key={idx}>{highlight}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                {job.summary && (
-                  <p className="text-sm text-gray-700 mb-2">{job.summary}</p>
-                )}
-                {job.highlights && (
-                  <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
-                    {job.highlights.map((highlight, idx) => (
-                      <li key={idx}>{highlight}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
+              )
+            )}
           </Section>
         )}
 

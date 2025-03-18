@@ -10,7 +10,7 @@ export const dummyResume = {
     github: "github.com/johndoe",
     // website: "johndoe.dev",
   },
-  work: [
+  experience: [
     {
       company: "CloudScale Technologies",
       position: "Senior Engineering Manager",
@@ -142,9 +142,9 @@ export const dummyResume = {
         "Reduced processing latency from 5s to 100ms through optimization of data flow and caching strategies",
         "Integrated machine learning models for real-time fraud detection with 99.7% accuracy",
         "Designed and implemented comprehensive monitoring system using Prometheus and Grafana",
-        "Achieved 99.99% system availability through implementation of circuit breakers and fallback mechanisms",
-        "Reduced operational costs by 55% through efficient resource utilization and auto-scaling",
-        "Implemented automated deployment pipeline reducing release time from days to hours",
+        // "Achieved 99.99% system availability through implementation of circuit breakers and fallback mechanisms",
+        // "Reduced operational costs by 55% through efficient resource utilization and auto-scaling",
+        // "Implemented automated deployment pipeline reducing release time from days to hours",
       ],
     },
   ],

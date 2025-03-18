@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ResumeEditor from "./pages/ResumeEditor";
 import TemplateSelector from "./pages/TemplateSelector";
+import JobMatch from "./pages/JobMatch";
 
 function App() {
   const router = createBrowserRouter([
@@ -19,6 +20,7 @@ function App() {
     { path: "/resume/new", element: <ResumeEditor /> },
     { path: "/resume/edit/:id", element: <ResumeEditor /> },
     { path: "/resume/templates", element: <TemplateSelector /> },
+    { path: "/resume/jobmatch", element: <JobMatch /> },
   ]);
   return (
     <>

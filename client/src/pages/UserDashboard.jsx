@@ -139,21 +139,23 @@ const UserDashboard = () => {
 
           {/* Action Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <ActionCard
-              title="Create New Resume"
-              description="Build your resume with AI"
-              bgGradient="bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600"
-              icon={<FiPlus className="h-6 w-6" />}
-              onClick={handleCreateResume}
-              delay={0}
-            />
+            <Link to="/resume/templates">
+              <ActionCard
+                title="Create New Resume"
+                description="Build your resume with AI"
+                bgGradient="bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600"
+                icon={<FiPlus className="h-6 w-6" />}
+                onClick={() => {}}
+                delay={0}
+              />
+            </Link>
 
             <ActionCard
               title="Update Resume"
               description="Keep your profile current"
               bgGradient="bg-gradient-to-br from-indigo-500 to-purple-600"
               icon={<FiRefreshCw className="h-6 w-6" />}
-              onClick={handleUpdateResume}
+              onClick={() => {}}
               delay={0.1}
             />
 
@@ -165,15 +167,16 @@ const UserDashboard = () => {
               onClick={() => {}}
               delay={0.2}
             />
-
-            <ActionCard
-              title="Job Match Score"
-              description="See how you match with jobs"
-              bgGradient="bg-gradient-to-br from-indigo-500 to-purple-600"
-              icon={<FiBarChart2 className="h-6 w-6" />}
-              onClick={() => {}}
-              delay={0.3}
-            />
+            <Link to="/resume/jobmatch">
+              <ActionCard
+                title="Job Match Score"
+                description="See how you match with jobs"
+                bgGradient="bg-gradient-to-br from-indigo-500 to-purple-600"
+                icon={<FiBarChart2 className="h-6 w-6" />}
+                onClick={() => {}}
+                delay={0.3}
+              />
+            </Link>
           </div>
         </motion.div>
 

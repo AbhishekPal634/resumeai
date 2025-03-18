@@ -101,7 +101,7 @@ const ClassicPDF = ({ resume }) => {
   const {
     basics,
     skills,
-    work,
+    experience, // Changed from work
     education,
     projects,
     awards,
@@ -165,30 +165,35 @@ const ClassicPDF = ({ resume }) => {
         {/* 4. Experience */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Experience</Text>
-          {work?.map((job, index) => (
-            <View key={index} style={styles.itemContainer}>
-              <View style={styles.row}>
-                <Text style={styles.bold}>{job.position}</Text>
-                <Text>
-                  {job.startDate} – {job.endDate || "Present"}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.italic}>{job.company}</Text>
-                <Text style={styles.italic}>{job.location}</Text>
-              </View>
-              {job.highlights && (
-                <View style={{ marginTop: 4 }}>
-                  {job.highlights.map((highlight, idx) => (
-                    <View key={idx} style={styles.listItem}>
-                      <Text style={styles.bullet}>•</Text>
-                      <Text>{highlight}</Text>
-                    </View>
-                  ))}
+          {experience?.map(
+            (
+              job,
+              index // Changed from work
+            ) => (
+              <View key={index} style={styles.itemContainer}>
+                <View style={styles.row}>
+                  <Text style={styles.bold}>{job.position}</Text>
+                  <Text>
+                    {job.startDate} – {job.endDate || "Present"}
+                  </Text>
                 </View>
-              )}
-            </View>
-          ))}
+                <View style={styles.row}>
+                  <Text style={styles.italic}>{job.company}</Text>
+                  <Text style={styles.italic}>{job.location}</Text>
+                </View>
+                {job.highlights && (
+                  <View style={{ marginTop: 4 }}>
+                    {job.highlights.map((highlight, idx) => (
+                      <View key={idx} style={styles.listItem}>
+                        <Text style={styles.bullet}>•</Text>
+                        <Text>{highlight}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+            )
+          )}
         </View>
 
         {/* 5. Projects */}
@@ -240,7 +245,7 @@ const ClassicPDF = ({ resume }) => {
               skills[key]?.length > 0 && (
                 <View key={key} style={styles.skillCategory}>
                   <Text style={styles.skillTitle}>{title}: </Text>
-                  <Text>{skills[key].join(" • ")}</Text>
+                  <Text>{skills[key].join(", ")}</Text>
                 </View>
               )
           )}

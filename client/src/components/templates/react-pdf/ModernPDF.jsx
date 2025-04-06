@@ -109,14 +109,13 @@ const styles = StyleSheet.create({
     padding: "0 12", // Reduced from "0 16"
   },
   section: {
-    marginBottom: 8, // Reduced from 12
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 11, // Reduced from 16
+    fontSize: 11,
     fontWeight: 700,
     color: "#111827",
-    borderBottomWidth: 1, // Reduced from 2
-    borderBottomColor: "#E5E7EB",
+    borderBottom: "1pt solid #E5E7EB",
     paddingBottom: 2,
     marginBottom: 6,
   },
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     color: "#374151",
   },
   experienceItem: {
-    marginBottom: 8, // Reduced from 12
+    marginBottom: 10,
   },
   jobHeader: {
     display: "flex",
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     color: "#4B5563",
   },
   dates: {
-    fontSize: 9,
+    fontSize: 8,
     color: "#6B7280",
   },
   bulletList: {
@@ -169,10 +168,9 @@ const styles = StyleSheet.create({
     color: "#374151",
     marginBottom: 2,
     lineHeight: 1.4,
-    paddingLeft: 4, // Reduced padding
   },
   educationItem: {
-    marginBottom: 6,
+    marginBottom: 10,
   },
   gpa: {
     fontSize: 9,
@@ -197,10 +195,10 @@ const styles = StyleSheet.create({
     color: "#374151",
   },
   certificationItem: {
-    marginBottom: 6,
+    marginBottom: 10,
   },
   awardItem: {
-    marginBottom: 6,
+    marginBottom: 10,
   },
   awarderText: {
     fontSize: 9,
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   publicationItem: {
-    marginBottom: 6,
+    marginBottom: 10,
   },
   publisherText: {
     fontSize: 9,
@@ -232,7 +230,13 @@ const styles = StyleSheet.create({
     color: "#6B7280",
   },
   volunteerItem: {
-    marginBottom: 8,
+    marginBottom: 10,
+  },
+  techStack: {
+    fontSize: 9,
+    color: "#4B5563",
+    marginTop: 2,
+    marginBottom: 4,
   },
 });
 
@@ -326,31 +330,30 @@ const ModernPDF = ({ resume }) => {
             </View>
           )}
 
-          {/* Experience Section */}
+          {/* Experience Section - CORRECTED */}
           {experience?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Professional Experience</Text>
               {experience.map((job, index) => (
                 <View
                   key={index}
-                  style={[styles.itemContainer, styles.lastNoMargin]}
+                  style={styles.experienceItem}
                 >
-                  <View style={styles.rowBetween}>
+                  <View style={styles.jobHeader}>
                     <View>
-                      <Text style={styles.bold}>{job.position}</Text>
-                      <Text style={styles.italic}>{job.company}</Text>
+                      <Text style={styles.jobTitle}>{job.position}</Text>
+                      <Text style={styles.jobCompany}>{job.company}</Text>
                     </View>
-                    <Text style={styles.date}>
+                    <Text style={styles.dates}>
                       {job.startDate} - {job.endDate || "Present"}
                     </Text>
                   </View>
                   {job.highlights && (
                     <View style={styles.bulletList}>
                       {job.highlights.map((highlight, idx) => (
-                        <View key={idx} style={styles.bulletItem}>
-                          <Text style={styles.bullet}>•</Text>
-                          <Text style={styles.bulletText}>{highlight}</Text>
-                        </View>
+                        <Text key={idx} style={styles.bulletItem}>
+                          • {highlight}
+                        </Text>
                       ))}
                     </View>
                   )}
@@ -363,10 +366,10 @@ const ModernPDF = ({ resume }) => {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Projects</Text>
               {projects.map((project, index) => (
-                <View key={index} style={{ marginBottom: 12 }}>
+                <View key={index} style={styles.experienceItem}>
                   <Text style={styles.jobTitle}>{project.name}</Text>
                   {project.description && (
-                    <Text style={styles.summary}>{project.description}</Text>
+                    <Text style={styles.techStack}>{project.description}</Text>
                   )}
                   {project.highlights && (
                     <View style={styles.bulletList}>

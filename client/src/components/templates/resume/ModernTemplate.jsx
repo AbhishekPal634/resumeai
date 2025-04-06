@@ -31,14 +31,22 @@ const ContactItem = ({ icon, children }) => (
   </div>
 );
 
-const Section = ({ title, children }) => (
-  <div className="mb-4">
-    <h2 className="text-base font-bold text-gray-900 border-b border-gray-200 pb-1 mb-2">
-      {title}
-    </h2>
-    {children}
-  </div>
-);
+const Section = ({ title, children }) => {
+  // Check if children is empty or null
+  const hasContent = React.Children.count(children) > 0;
+  
+  // Only render the section if it has content
+  if (!hasContent) return null;
+  
+  return (
+    <div className="mb-4">
+      <h2 className="text-base font-bold text-gray-900 border-b border-gray-200 pb-1 mb-2">
+        {title}
+      </h2>
+      {children}
+    </div>
+  );
+};
 
 const SkillCategory = ({ title, skills }) => (
   <div className="mb-2">
@@ -48,58 +56,68 @@ const SkillCategory = ({ title, skills }) => (
 );
 
 const ModernTemplate = ({ resume }) => {
+  console.log("ModernTemplate rendering with data:", resume);
+  
+  // Destructure the resume data with fallbacks for each section
   const {
-    basics,
-    skills,
-    experience, // Changed from work
-    education,
-    projects,
-    awards,
-    certifications,
-    publications,
-    languages,
-    volunteer,
-  } = resume;
+    basics = {},
+    experience = [],
+    education = [],
+    skills = {
+      programmingLanguages: [],
+      librariesFrameworks: [],
+      databases: [],
+      toolsPlatforms: [],
+      apis: []
+    },
+    projects = [],
+    awards = []
+  } = resume || {};
 
-  const skillCategories = {
-    "Programming Languages": skills.programmingLanguages || [],
-    "Libraries & Frameworks": skills.librariesFrameworks || [],
-    Databases: skills.databases || [],
-    "Tools & Platforms": skills.toolsPlatforms || [],
-    APIs: skills.apis || [],
-  };
+  // Check if skills has any non-empty arrays
+  const hasSkills = Object.values(skills).some(
+    skillArray => Array.isArray(skillArray) && skillArray.length > 0
+  );
 
+  // Check if personal info has any filled fields
+  const hasPersonalInfo = Object.values(basics).some(
+    value => value && value.trim && value.trim() !== ''
+  );
+
+  // Render the template
   return (
     <div
       id="resume-content"
       className="max-w-4xl mx-auto bg-white shadow-sm rounded-xl overflow-hidden font-['Open_Sans']"
     >
       {/* Header/Contact Info */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4">
-        <h1 className="text-xl font-bold text-gray-900 mb-1">
-          {basics.name || "Your Name"}
-        </h1>
-        <div className="flex flex-wrap gap-3 text-xs text-gray-600">
-          {basics.email && (
-            <ContactItem icon={Icons.email}>{basics.email}</ContactItem>
-          )}
-          {basics.phone && (
-            <ContactItem icon={Icons.phone}>{basics.phone}</ContactItem>
-          )}
-          {basics.location && (
-            <ContactItem icon={Icons.location}>{basics.location}</ContactItem>
-          )}
-          {basics.linkedin && (
-            <ContactItem icon={Icons.linkedin}>{basics.linkedin}</ContactItem>
-          )}
-          {basics.github && (
-            <ContactItem icon={Icons.github}>{basics.github}</ContactItem>
-          )}
-          {basics.website && (
-            <ContactItem icon={Icons.website}>{basics.website}</ContactItem>
-          )}
+      {hasPersonalInfo && (
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4">
+          <h1 className="text-xl font-bold text-gray-900 mb-1">
+            {basics.name || ""}
+          </h1>
+          <div className="flex flex-wrap gap-3 text-xs text-gray-600">
+            {basics.email && (
+              <ContactItem icon={Icons.email}>{basics.email}</ContactItem>
+            )}
+            {basics.phone && (
+              <ContactItem icon={Icons.phone}>{basics.phone}</ContactItem>
+            )}
+            {basics.location && (
+              <ContactItem icon={Icons.location}>{basics.location}</ContactItem>
+            )}
+            {basics.linkedin && (
+              <ContactItem icon={Icons.linkedin}>{basics.linkedin}</ContactItem>
+            )}
+            {basics.github && (
+              <ContactItem icon={Icons.github}>{basics.github}</ContactItem>
+            )}
+            {basics.website && (
+              <ContactItem icon={Icons.website}>{basics.website}</ContactItem>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="p-6 space-y-4">
         {/* Summary Section */}
@@ -111,55 +129,74 @@ const ModernTemplate = ({ resume }) => {
           </Section>
         )}
 
-        {/* Updated Skills Section */}
-        {Object.keys(skills).length > 0 && (
+        {/* Technical Skills Section */}
+        {hasSkills && (
           <Section title="Technical Skills">
-            {Object.entries(skillCategories).map(
-              ([category, skillList]) =>
-                skillList.length > 0 && (
-                  <SkillCategory
-                    key={category}
-                    title={category}
-                    skills={skillList}
-                  />
-                )
+            {skills.programmingLanguages && skills.programmingLanguages.length > 0 && (
+              <SkillCategory
+                title="Programming Languages"
+                skills={skills.programmingLanguages}
+              />
+            )}
+            {skills.librariesFrameworks && skills.librariesFrameworks.length > 0 && (
+              <SkillCategory
+                title="Libraries & Frameworks"
+                skills={skills.librariesFrameworks}
+              />
+            )}
+            {skills.databases && skills.databases.length > 0 && (
+              <SkillCategory
+                title="Databases"
+                skills={skills.databases}
+              />
+            )}
+            {skills.toolsPlatforms && skills.toolsPlatforms.length > 0 && (
+              <SkillCategory
+                title="Tools & Platforms"
+                skills={skills.toolsPlatforms}
+              />
+            )}
+            {skills.apis && skills.apis.length > 0 && (
+              <SkillCategory
+                title="APIs"
+                skills={skills.apis}
+              />
             )}
           </Section>
         )}
 
         {/* Experience Section */}
-        {experience.length > 0 && ( // Changed from work
+        {experience.length > 0 && (
           <Section title="Professional Experience">
-            {experience.map(
-              (
-                job,
-                index // Changed from work
-              ) => (
-                <div key={index} className="mb-3 last:mb-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900">
-                        {job.position}
-                      </h3>
-                      <div className="text-sm text-gray-600">{job.company}</div>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {job.startDate} - {job.endDate || "Present"}
+            {experience.map((job, index) => (
+              <div key={index} className="mb-4 last:mb-0">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">
+                      {job.position}
+                    </h3>
+                    <div className="text-gray-600 text-sm">
+                      {job.company}
                     </div>
                   </div>
-                  {job.summary && (
-                    <p className="text-sm text-gray-700 mb-2">{job.summary}</p>
-                  )}
-                  {job.highlights && (
-                    <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
-                      {job.highlights.map((highlight, idx) => (
-                        <li key={idx}>{highlight}</li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="text-xs text-gray-500">
+                    {job.startDate} - {job.endDate || "Present"}
+                  </div>
                 </div>
-              )
-            )}
+                {job.summary && (
+                  <p className="mt-1 text-sm text-gray-700">
+                    {job.summary}
+                  </p>
+                )}
+                {job.highlights && job.highlights.length > 0 && (
+                  <ul className="mt-1 text-sm text-gray-700 list-disc list-inside space-y-1">
+                    {job.highlights.map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
           </Section>
         )}
 
@@ -168,18 +205,18 @@ const ModernTemplate = ({ resume }) => {
           <Section title="Projects">
             {projects.map((project, index) => (
               <div key={index} className="mb-3 last:mb-0">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 text-sm">
                   {project.name}
                 </h3>
                 {project.description && (
-                  <p className="text-sm text-gray-700 mb-2">
+                  <p className="text-xs text-gray-600 mt-0.5">
                     {project.description}
                   </p>
                 )}
-                {project.highlights && (
-                  <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
-                    {project.highlights.map((highlight, idx) => (
-                      <li key={idx}>{highlight}</li>
+                {project.highlights && project.highlights.length > 0 && (
+                  <ul className="mt-1 text-sm text-gray-700 list-disc list-inside space-y-1">
+                    {project.highlights.map((point, i) => (
+                      <li key={i}>{point}</li>
                     ))}
                   </ul>
                 )}
@@ -192,13 +229,13 @@ const ModernTemplate = ({ resume }) => {
         {education.length > 0 && (
           <Section title="Education">
             {education.map((edu, index) => (
-              <div key={index} className="mb-2 last:mb-0">
+              <div key={index} className="mb-3 last:mb-0">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900">
+                    <h3 className="font-semibold text-gray-900 text-sm">
                       {edu.studyType} in {edu.area}
                     </h3>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-gray-600 text-sm">
                       {edu.institution}
                     </div>
                   </div>
@@ -216,25 +253,8 @@ const ModernTemplate = ({ resume }) => {
           </Section>
         )}
 
-        {/* Certifications Section */}
-        {certifications?.length > 0 && (
-          <Section title="Certifications">
-            {certifications.map((cert, index) => (
-              <div key={index} className="mb-2 last:mb-0">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-gray-900 text-sm">
-                    {cert.name}
-                  </h3>
-                  <div className="text-sm text-gray-500">{cert.date}</div>
-                </div>
-                <div className="text-gray-600 text-sm">{cert.issuer}</div>
-              </div>
-            ))}
-          </Section>
-        )}
-
         {/* Awards Section */}
-        {awards?.length > 0 && (
+        {awards && awards.length > 0 && (
           <Section title="Awards & Achievements">
             {awards.map((award, index) => (
               <div key={index} className="mb-2 last:mb-0">
@@ -247,61 +267,6 @@ const ModernTemplate = ({ resume }) => {
                 <div className="text-gray-600 text-sm">{award.awarder}</div>
                 {award.summary && (
                   <p className="text-gray-700 text-sm mt-1">{award.summary}</p>
-                )}
-              </div>
-            ))}
-          </Section>
-        )}
-
-        {/* Publications Section */}
-        {publications?.length > 0 && (
-          <Section title="Publications">
-            {publications.map((pub, index) => (
-              <div key={index} className="mb-2 last:mb-0">
-                <h3 className="font-semibold text-gray-900 text-sm">
-                  {pub.name}
-                </h3>
-                <div className="text-gray-600 text-sm">{pub.publisher}</div>
-                <div className="text-sm text-gray-500">{pub.releaseDate}</div>
-              </div>
-            ))}
-          </Section>
-        )}
-
-        {/* Languages Section */}
-        {languages?.length > 0 && (
-          <Section title="Languages">
-            <div className="flex flex-wrap gap-4">
-              {languages.map((lang, index) => (
-                <div key={index} className="text-sm text-gray-700">
-                  <span className="font-semibold">{lang.language}</span>
-                  {lang.fluency && ` - ${lang.fluency}`}
-                </div>
-              ))}
-            </div>
-          </Section>
-        )}
-
-        {/* Volunteer Section */}
-        {volunteer?.length > 0 && (
-          <Section title="Volunteer Experience">
-            {volunteer.map((vol, index) => (
-              <div key={index} className="mb-3 last:mb-0">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">
-                      {vol.position}
-                    </h3>
-                    <div className="text-gray-600 text-sm">
-                      {vol.organization}
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {vol.startDate} - {vol.endDate || "Present"}
-                  </div>
-                </div>
-                {vol.summary && (
-                  <p className="text-gray-700 text-sm mt-1">{vol.summary}</p>
                 )}
               </div>
             ))}

@@ -59,57 +59,95 @@ const ClassicTemplate = ({ resume }) => {
       )}
 
       {/* Education */}
-      <Section title="Education">
-        {education?.map((edu, index) => (
-          <div key={index} className="mb-2.5 last:mb-0">
-            <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-[11px] text-gray-900">
-                {edu.institution}
-              </h3>
-              <div className="text-[11px] text-gray-800">{edu.location}</div>
+      {Array.isArray(education) && education.length > 0 && (
+        <Section title="Education">
+          {education?.map((edu, index) => (
+            <div key={index} className="mb-2.5 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-bold text-[11px] text-gray-900">
+                  {edu.institution}
+                </h3>
+                <div className="text-[11px] text-gray-800">{edu.location}</div>
+              </div>
+              <div className="flex justify-between items-baseline italic">
+                <div className="text-[11px] text-gray-700">
+                  {edu.studyType && edu.area
+                    ? `${edu.studyType} in ${edu.area}`
+                    : edu.area}
+                </div>
+                <div className="text-[11px] text-gray-700">
+                  {edu.startDate} – {edu.endDate}
+                </div>
+              </div>
+              {edu.gpa && (
+                <div className="text-[11px] text-gray-700 mt-1">
+                  GPA: {edu.gpa}
+                </div>
+              )}
             </div>
-            <div className="flex justify-between items-baseline italic">
-              <div className="text-[11px] text-gray-700">
-                {edu.studyType && edu.area
-                  ? `${edu.studyType} in ${edu.area}`
-                  : edu.area}
-              </div>
-              <div className="text-[11px] text-gray-700">
-                {edu.startDate} – {edu.endDate}
-              </div>
-            </div>
-            {edu.gpa && (
-              <div className="text-[11px] text-gray-700 mt-1">
-                GPA: {edu.gpa}
-              </div>
-            )}
-          </div>
-        ))}
-      </Section>
+          ))}
+        </Section>
+      )}
 
       {/* Experience */}
-      <Section title="Experience">
-        {experience?.map(
-          (
-            job,
-            index // Changed from work
-          ) => (
+      {Array.isArray(experience) && experience.length > 0 && (
+        <Section title="Experience">
+          {experience?.map(
+            (
+              job,
+              index // Changed from work
+            ) => (
+              <div key={index} className="mb-3 last:mb-0">
+                <div className="flex justify-between items-baseline">
+                  <h3 className="font-bold text-[11px] text-gray-900">
+                    {job.position}
+                  </h3>
+                  <div className="text-[11px] text-gray-800">
+                    {job.startDate} – {job.endDate || "Present"}
+                  </div>
+                </div>
+                <div className="flex justify-between items-baseline italic">
+                  <div className="text-[11px] text-gray-700">{job.company}</div>
+                  <div className="text-[11px] text-gray-700">{job.location}</div>
+                </div>
+                {job.highlights && (
+                  <ul className="list-disc list-outside ml-5 mt-1 text-[11px] text-gray-800">
+                    {job.highlights.map((highlight, idx) => (
+                      <li key={idx} className="mb-1">
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )
+          )}
+        </Section>
+      )}
+
+      {/* Projects */}
+      {Array.isArray(projects) && projects.length > 0 && (
+        <Section title="Projects">
+          {projects.map((project, index) => (
             <div key={index} className="mb-3 last:mb-0">
               <div className="flex justify-between items-baseline">
                 <h3 className="font-bold text-[11px] text-gray-900">
-                  {job.position}
+                  {project.name}
                 </h3>
                 <div className="text-[11px] text-gray-800">
-                  {job.startDate} – {job.endDate || "Present"}
+                  {project.startDate && (
+                    <>{project.startDate}{project.endDate ? ` – ${project.endDate}` : ""}</>
+                  )}
                 </div>
               </div>
-              <div className="flex justify-between items-baseline italic">
-                <div className="text-[11px] text-gray-700">{job.company}</div>
-                <div className="text-[11px] text-gray-700">{job.location}</div>
-              </div>
-              {job.highlights && (
+              {project.description && (
+                <div className="italic text-[10px] text-gray-600 mt-1">
+                  {project.description}
+                </div>
+              )}
+              {project.highlights && project.highlights.length > 0 && (
                 <ul className="list-disc list-outside ml-5 mt-1 text-[11px] text-gray-800">
-                  {job.highlights.map((highlight, idx) => (
+                  {project.highlights.map((highlight, idx) => (
                     <li key={idx} className="mb-1">
                       {highlight}
                     </li>
@@ -117,55 +155,29 @@ const ClassicTemplate = ({ resume }) => {
                 </ul>
               )}
             </div>
-          )
-        )}
-      </Section>
-
-      {/* Projects */}
-      <Section title="Projects">
-        {projects?.map((project, index) => (
-          <div key={index} className="mb-3 last:mb-0">
-            <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-[11px] text-gray-900">
-                {project.name}{" "}
-                {project.technologies && (
-                  <span className="italic font-normal text-[11px] text-gray-700">
-                    | {project.technologies}
-                  </span>
-                )}
-              </h3>
-              <div className="text-[11px] text-gray-800">
-                {project.startDate} – {project.endDate || "Present"}
-              </div>
-            </div>
-            {project.highlights && (
-              <ul className="list-disc list-outside ml-5 mt-1 text-[11px] text-gray-800">
-                {project.highlights.map((highlight, idx) => (
-                  <li key={idx} className="mb-1">
-                    {highlight}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </Section>
+          ))}
+        </Section>
+      )}
 
       {/* Technical Skills */}
-      <Section title="Technical Skills">
-        {[
-          { key: "programmingLanguages", title: "Languages" },
-          { key: "librariesFrameworks", title: "Frameworks" },
-          { key: "devTools", title: "Developer Tools" },
-          { key: "databases", title: "Databases" },
-          { key: "cloud", title: "Cloud Services" },
-        ].map(
-          ({ key, title }) =>
-            skills[key]?.length > 0 && (
-              <SkillCategory key={key} title={title} skills={skills[key]} />
-            )
-        )}
-      </Section>
+      {skills && Object.values(skills).some(skill => Array.isArray(skill) && skill.length > 0) && (
+        <Section title="Technical Skills">
+          {[
+            { key: "programmingLanguages", title: "Languages" },
+            { key: "librariesFrameworks", title: "Frameworks" },
+            { key: "devTools", title: "Developer Tools" },
+            { key: "databases", title: "Databases" },
+            { key: "cloud", title: "Cloud Services" },
+            { key: "toolsPlatforms", title: "Tools & Platforms" },
+            { key: "apis", title: "APIs" },
+          ].map(
+            ({ key, title }) =>
+              skills[key]?.length > 0 && (
+                <SkillCategory key={key} title={title} skills={skills[key]} />
+              )
+          )}
+        </Section>
+      )}
 
       {/* Awards */}
       {awards?.length > 0 && (

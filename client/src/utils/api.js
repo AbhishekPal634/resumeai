@@ -87,3 +87,24 @@ export const processCategoryEntireSection = async (input, category, resumeData) 
     throw error;
   }
 };
+
+/**
+ * Generate a professional summary based on resume data
+ * @param {object} resumeData - Current resume data
+ * @returns {Promise<object>} - Response with generated summary
+ */
+export const generateSummary = async (resumeData) => {
+  try {
+    console.log('Sending to /api/generate-summary:', { resumeData });
+    
+    const response = await axios.post(`${API_URL}/generate-summary`, {
+      resumeData
+    });
+    
+    console.log('Response from /api/generate-summary:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error generating summary:', error);
+    throw error;
+  }
+};

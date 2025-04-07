@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink, BlobProvider } from "@react-pdf/renderer";
 import axios from "axios";
 import ResumeEditorLayout from "../components/layouts/ResumeEditorLayout";
 import ChatbotAssistant from "../components/editor/ChatbotAssistant";
@@ -29,135 +29,101 @@ const emptyResume = {
     apis: [],
   },
   projects: [],
-  achievements: [],
+  awards: [], // This is where achievements and awards are stored
 };
 
 const ResumeEditorPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const templateId = searchParams.get("template") || "modern";
+  const templateParam = searchParams.get("template");
 
-  // Start with empty resume instead of dummy data
   const [resume, setResume] = useState(emptyResume);
   const [resumeName, setResumeName] = useState("My Resume");
+  const [templateId, setTemplateId] = useState(templateParam || "modern");
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeSection, setActiveSection] = useState("basics");
   const [isSaving, setIsSaving] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
-  const [showChatbot, setShowChatbot] = useState(true); // Auto-show chatbot to start building resume
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [activeSection, setActiveSection] = useState("basics");
+  const [pdfError, setPdfError] = useState(false);
 
+  // Check if viewport is mobile
   useEffect(() => {
-    const fetchResumeData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/resume-data');
-        if (response.data && response.data.success && response.data.resumeData) {
-          setResume(response.data.resumeData);
-        }
-      } catch (error) {
-        console.error('Error fetching resume data:', error);
-      }
-    };
-    fetchResumeData();
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
-  // Function to update resume data from chatbot responses
-  const updateResumeData = (newResumeData) => {
-    if (!newResumeData) return;
-    
-    console.log("ResumeEditor received new resume data:", newResumeData);
-    
-    // Create a deep copy of the current resume
-    const updatedResume = JSON.parse(JSON.stringify(resume));
-    
-    // Update specific sections based on what's in the newResumeData
-    if (newResumeData.basics) {
-      console.log("Updating basics section with:", newResumeData.basics);
-      updatedResume.basics = {
-        ...updatedResume.basics,
-        ...newResumeData.basics
-      };
-    } else if (newResumeData.personalInfo) {
-      // Backward compatibility for personalInfo
-      console.log("Updating basics from personalInfo:", newResumeData.personalInfo);
-      updatedResume.basics = {
-        ...updatedResume.basics,
-        name: newResumeData.personalInfo.name || updatedResume.basics.name,
-        email: newResumeData.personalInfo.email || updatedResume.basics.email,
-        phone: newResumeData.personalInfo.phone || updatedResume.basics.phone,
-        location: newResumeData.personalInfo.location || updatedResume.basics.location,
-        summary: newResumeData.personalInfo.summary || updatedResume.basics.summary,
-        linkedin: newResumeData.personalInfo.linkedin || updatedResume.basics.linkedin,
-        github: newResumeData.personalInfo.github || updatedResume.basics.github,
-      };
-    }
-    
-    if (newResumeData.education) {
-      console.log("Updating education section with:", newResumeData.education);
-      updatedResume.education = newResumeData.education;
-    }
-    
-    if (newResumeData.skills) {
-      console.log("Updating skills section with:", newResumeData.skills);
-      updatedResume.skills = newResumeData.skills;
-    } else if (newResumeData.technicalSkills) {
-      // Backward compatibility for technicalSkills
-      console.log("Updating skills from technicalSkills:", newResumeData.technicalSkills);
-      updatedResume.skills = {
-        programmingLanguages: newResumeData.technicalSkills.Languages || [],
-        librariesFrameworks: newResumeData.technicalSkills['Libraries/Frameworks'] || [],
-        databases: newResumeData.technicalSkills.Databases || [],
-        toolsPlatforms: newResumeData.technicalSkills['Tools/Platforms'] || [],
-        apis: newResumeData.technicalSkills.APIs || [],
-      };
-    }
-    
-    if (newResumeData.projects) {
-      console.log("Updating projects section with:", newResumeData.projects);
-      updatedResume.projects = newResumeData.projects;
-    }
-    
-    if (newResumeData.experience) {
-      console.log("Updating experience section with:", newResumeData.experience);
-      updatedResume.experience = newResumeData.experience;
-    } else if (newResumeData.positions) {
-      // Backward compatibility for positions
-      console.log("Updating experience from positions:", newResumeData.positions);
-      updatedResume.experience = newResumeData.positions.map(position => ({
-        company: position.organization || '',
-        position: position.role || '',
-        startDate: position.duration ? position.duration.split(' - ')[0] : '',
-        endDate: position.duration ? position.duration.split(' - ')[1] : '',
-        summary: '',
-        highlights: position.points || [],
-      }));
-    }
-    
-    if (newResumeData.awards) {
-      console.log("Updating awards section with:", newResumeData.awards);
-      updatedResume.awards = newResumeData.awards;
-    } else if (newResumeData.achievements) {
-      // Backward compatibility for achievements
-      console.log("Updating awards from achievements:", newResumeData.achievements);
-      if (Array.isArray(newResumeData.achievements)) {
-        updatedResume.awards = newResumeData.achievements.map(achievement => ({
-          title: achievement,
-          date: '',
-          awarder: '',
-          summary: '',
-        }));
+  // Load resume data
+  useEffect(() => {
+    const fetchResume = async () => {
+      // Example of loading from API
+      // For now, we'll just use dummy data
+      if (id) {
+        // In a real app, we would fetch from the API
+        // const response = await axios.get(`/api/resumes/${id}`);
+        // setResume(response.data.resume);
+        // setResumeName(response.data.name);
+
+        // For demo, set dummy data
+        setResume({
+          ...emptyResume,
+          basics: {
+            ...emptyResume.basics,
+            name: "John Doe",
+            email: "john@example.com",
+            phone: "123-456-7890",
+            summary:
+              "Software engineer with 5+ years of experience in web development.",
+          },
+          // Add user's achievements
+          awards: [
+            {
+              title: "3 Stars Rating on CodeChef",
+              date: "2024",
+              awarder: "CodeChef",
+              summary: "Achieved competitive programming rating of 3 stars through consistent problem-solving and algorithm optimization."
+            },
+            {
+              title: "Coding Hunt Champion",
+              date: "2025",
+              awarder: "Ambiora Tech Fest",
+              summary: "Won first place in the annual Coding Hunt competition for the second consecutive year, solving complex algorithmic challenges under time constraints."
+            },
+            {
+              title: "Coding Hunt Champion",
+              date: "2024",
+              awarder: "Ambiora Tech Fest",
+              summary: "Secured first place in the Coding Hunt competition by solving a series of algorithmic and data structure problems."
+            }
+          ]
+        });
+        setResumeName(`Resume #${id}`);
       }
-    }
-    
-    console.log("Final updated resume:", updatedResume);
-    
-    // Update the resume state
-    setResume(updatedResume);
+    };
+
+    fetchResume();
+  }, [id]);
+
+  // Update resume data
+  const updateResumeData = (updatedData) => {
+    setResume((prevData) => ({
+      ...prevData,
+      ...updatedData,
+    }));
   };
 
   const handleSave = async () => {
     setIsSaving(true);
+
+    // Here you would save to your API
+    // const response = await axios.post('/api/resumes', { name: resumeName, data: resume });
+
+    // Simulate saving
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSaving(false);
     setSaveSuccess(true);
@@ -165,15 +131,29 @@ const ResumeEditorPage = () => {
   };
 
   const handleExport = () => {
-    const downloadLink = document.getElementById("pdf-download");
-    if (downloadLink) {
+    try {
       setIsDownloading(true);
-      downloadLink.click();
-      setDownloadSuccess(true);
-      setTimeout(() => {
-        setDownloadSuccess(false);
+      setPdfError(false);
+      
+      // Try to find the download link in the DOM
+      const downloadLink = document.getElementById("pdf-download");
+      if (downloadLink) {
+        downloadLink.click();
+        setDownloadSuccess(true);
+        setTimeout(() => {
+          setDownloadSuccess(false);
+          setIsDownloading(false);
+        }, 2000);
+      } else {
+        // Fallback if the download link isn't found
+        console.error("PDF download link not found");
+        setPdfError(true);
         setIsDownloading(false);
-      }, 2000);
+      }
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      setPdfError(true);
+      setIsDownloading(false);
     }
   };
 
@@ -204,14 +184,40 @@ const ResumeEditorPage = () => {
     >
       <div>
         <TemplateRenderer resume={resume} templateId={templateId} />
+        
+        {pdfError && (
+          <div className="mt-4 p-4 text-sm text-red-800 bg-red-100 border border-red-200 rounded-md">
+            There was an error generating your PDF. Please try a different template or check your browser console for more details.
+          </div>
+        )}
+        
         <div className="hidden">
-          <PDFDownloadLink
-            id="pdf-download"
+          <BlobProvider 
             document={<ResumePDF resume={resume} templateId={templateId} />}
             fileName={`${resumeName.replace(/\s+/g, "-").toLowerCase()}.pdf`}
           >
-            {({ loading }) => (loading ? "Preparing PDF..." : "Download")}
-          </PDFDownloadLink>
+            {({ url, blob, loading, error }) => {
+              if (error) {
+                console.error("Error generating PDF:", error);
+                setPdfError(true);
+                return null;
+              }
+              
+              if (loading || !url) {
+                return <p>Loading document...</p>;
+              }
+              
+              return (
+                <a 
+                  id="pdf-download"
+                  href={url} 
+                  download={`${resumeName.replace(/\s+/g, "-").toLowerCase()}.pdf`}
+                >
+                  {isDownloading ? "Preparing PDF..." : "Download"}
+                </a>
+              );
+            }}
+          </BlobProvider>
         </div>
       </div>
     </ResumeEditorLayout>

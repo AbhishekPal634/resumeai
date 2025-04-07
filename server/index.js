@@ -1372,11 +1372,30 @@ app.post('/api/generate-summary', async (req, res) => {
       
       // Generate a fallback summary based on the resume data
       const name = resumeData.basics?.name || '';
-      const skills = resumeData.skills?.programmingLanguages?.slice(0, 3).join(', ') || '';
+      
+      // Extract key skills from all skill categories
+      let allSkills = [];
+      if (resumeData.skills) {
+        Object.keys(resumeData.skills).forEach(category => {
+          if (Array.isArray(resumeData.skills[category])) {
+            allSkills = [...allSkills, ...resumeData.skills[category]];
+          }
+        });
+      }
+      
+      // Get top 3 skills
+      const skills = allSkills.slice(0, 3).join(', ');
+      
+      // Get most recent job experience
       const experience = resumeData.experience?.length > 0 ? 
         `${resumeData.experience[0].position} at ${resumeData.experience[0].company}` : '';
       
-      const fallbackSummary = `Experienced professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`;
+      // Get education
+      const education = resumeData.education?.length > 0 ?
+        `${resumeData.education[0].studyType || ''} in ${resumeData.education[0].area || ''} from ${resumeData.education[0].institution || ''}`.trim() : '';
+      
+      // Create a more comprehensive fallback summary
+      const fallbackSummary = `Experienced ${skills ? `${skills} ` : ''}professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}${education ? `Educated with ${education}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`;
       
       return res.json({
         summary: fallbackSummary,
@@ -1435,11 +1454,30 @@ app.post('/api/generate-summary', async (req, res) => {
       
       if (resumeData) {
         const name = resumeData.basics?.name || '';
-        const skills = resumeData.skills?.programmingLanguages?.slice(0, 3).join(', ') || '';
+        
+        // Extract key skills from all skill categories
+        let allSkills = [];
+        if (resumeData.skills) {
+          Object.keys(resumeData.skills).forEach(category => {
+            if (Array.isArray(resumeData.skills[category])) {
+              allSkills = [...allSkills, ...resumeData.skills[category]];
+            }
+          });
+        }
+        
+        // Get top 3 skills
+        const skills = allSkills.slice(0, 3).join(', ');
+        
+        // Get most recent job experience
         const experience = resumeData.experience?.length > 0 ? 
           `${resumeData.experience[0].position} at ${resumeData.experience[0].company}` : '';
         
-        const fallbackSummary = `Experienced professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`;
+        // Get education
+        const education = resumeData.education?.length > 0 ?
+          `${resumeData.education[0].studyType || ''} in ${resumeData.education[0].area || ''} from ${resumeData.education[0].institution || ''}`.trim() : '';
+        
+        // Create a more comprehensive fallback summary
+        const fallbackSummary = `Experienced ${skills ? `${skills} ` : ''}professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}${education ? `Educated with ${education}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`;
         
         return res.json({
           summary: fallbackSummary,

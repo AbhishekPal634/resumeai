@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaRobot, FaUser, FaPaperPlane } from "react-icons/fa";
-import { processUserInput, processCategory } from "../../utils/api";
+import { processUserInput, processCategory, generateSummary } from "../../utils/api";
 import axios from 'axios';
 
 const ChatMessage = ({ message, formatTime }) => (
@@ -312,12 +312,11 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
     setMessages(prev => [...prev, loadingMessage]);
     
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/generate-summary`, {
-        resumeData: currentResumeData
-      });
+      // Use the imported generateSummary function instead of direct axios call
+      const response = await generateSummary(currentResumeData);
       
-      if (response.data && response.data.success && response.data.summary) {
-        const summary = response.data.summary;
+      if (response && response.success && response.summary) {
+        const summary = response.summary;
         
         // Update the resume data with the generated summary
         const updatedResumeData = {
@@ -337,7 +336,7 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
         }
         
         // Determine message based on whether it was a fallback summary or not
-        const messageText = response.data.fallback 
+        const messageText = response.fallback 
           ? "I've created a basic professional summary for you based on your information. Would you like to refine it further? If so, please tell me what you'd like to emphasize in your summary."
           : "I've generated a professional summary based on your resume information. You can edit it later if needed.";
         
@@ -350,7 +349,7 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
         setMessages(prev => [...prev, successMessage]);
         
         // If it was a fallback summary, we might want to offer manual refinement
-        if (response.data.fallback) {
+        if (response.fallback) {
           setAwaitingManualSummary(true);
         }
       } else {

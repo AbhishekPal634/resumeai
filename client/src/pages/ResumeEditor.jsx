@@ -29,7 +29,7 @@ const emptyResume = {
     apis: [],
   },
   projects: [],
-  awards: [], // This is where achievements and awards are stored
+  achievements: [],
 };
 
 const ResumeEditorPage = () => {
@@ -80,27 +80,6 @@ const ResumeEditorPage = () => {
             summary:
               "Software engineer with 5+ years of experience in web development.",
           },
-          // Add user's achievements
-          awards: [
-            {
-              title: "3 Stars Rating on CodeChef",
-              date: "2024",
-              awarder: "CodeChef",
-              summary: "Achieved competitive programming rating of 3 stars through consistent problem-solving and algorithm optimization."
-            },
-            {
-              title: "Coding Hunt Champion",
-              date: "2025",
-              awarder: "Ambiora Tech Fest",
-              summary: "Won first place in the annual Coding Hunt competition for the second consecutive year, solving complex algorithmic challenges under time constraints."
-            },
-            {
-              title: "Coding Hunt Champion",
-              date: "2024",
-              awarder: "Ambiora Tech Fest",
-              summary: "Secured first place in the Coding Hunt competition by solving a series of algorithmic and data structure problems."
-            }
-          ]
         });
         setResumeName(`Resume #${id}`);
       }

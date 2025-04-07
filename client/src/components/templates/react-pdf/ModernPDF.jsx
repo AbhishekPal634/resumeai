@@ -1,6 +1,6 @@
 import React from "react";
 
-// This component doesn't use @react-pdf/renderer directly but is a fallback HTML component
+// Create a fallback component that doesn't use @react-pdf/renderer
 const ModernPDF = ({ resume }) => {
   const {
     basics,
@@ -138,15 +138,11 @@ const ModernPDF = ({ resume }) => {
         </div>
       )}
 
-      {/* Note that this is a preview */}
       <div className="text-xs text-gray-500 text-center mt-8">
-        This is a preview view of your resume. Download as PDF for the final formatted document.
+        Note: This is a fallback view due to compatibility issues with the PDF renderer and React 19.
       </div>
     </div>
   );
 };
-
-// Mark this explicitly as not a React-PDF component
-ModernPDF.isReactPDFComponent = false;
 
 export default ModernPDF;

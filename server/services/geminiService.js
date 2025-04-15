@@ -228,17 +228,17 @@ async function processFieldWithGemini(userInput, stage, question) {
                `; // source:
            } else if (question === "description") { // source: [cite: 48]
                prompt = `
-                 As an ATS expert, format the following project description to highlight the tech stack: "${userInput}".
-                 Format the tech stack as a simple comma-separated list WITHOUT the "Built with" prefix:
+                 As an ATS expert, extract the technology stack from the following project description: "${userInput}".
+                 Format the tech stack as a simple comma-separated list WITHOUT any explanatory text or prefix:
                  "[Tech1], [Tech2], [Tech3], etc."
                  For example:
-                 - If input mentions "I created a web app using React and Node.js with MongoDB", format as "React.js, Node.js, MongoDB"
-                 - If input is "Python script for data analysis", format as "Python, Data Analysis"
+                 - Input: "I created a web app using React and Node.js with MongoDB" -> Output: "React.js, Node.js, MongoDB"
+                 - Input: "Python script for data analysis" -> Output: "Python, Data Analysis"
                  Guidelines:
-                 1. Do NOT include "Built with" or any other prefix
-                 2. If no specific technologies are mentioned, extract the general tech areas (Web Development, Mobile App, etc.)
-                 3. Use proper capitalization and formatting for tech names (React.js, Node.js, TailwindCSS, etc.)
-                 4. Separate technologies with commas only
+                 1. Do NOT include any explanatory text, prefixes like "Built with:", or JSON formatting.
+                 2. If no specific technologies are mentioned, extract the general tech areas (e.g., "Web Development, Data Analysis").
+                 3. Use proper capitalization and formatting for tech names (e.g., React.js, Node.js, Tailwind CSS).
+                 4. Separate technologies with commas only (e.g., "Tech1, Tech2, Tech3").
                  5. If the input already follows this format, just improve the formatting if needed
                  Return your response as a JSON object with this structure:
                  {
@@ -451,31 +451,34 @@ async function processCategoryWithGemini(userInput, category) {
               Do not include any explanations, just the JSON object.
             `; // source:
             break;
-         case 'projects': // source: [cite: 105, 222]
-            prompt = `
-              You are a resume assistant helping to extract project information from user input.
-              Parse the following text and extract the project information in a structured format.
-              User input: "${normalizedInput}"
-              Return ONLY a JSON array with the following structure:
-              [
-                {
-                  "name": "Project Name",
-                  "description": "Detailed project description with ATS-friendly keywords",
-                  "highlights": ["Achievement or feature 1", "Achievement or feature 2", ...]
-                }
-                // Additional project entries if provided
-              ]
-              For the project descriptions and highlights:
-              1. Use detailed, specific language that includes relevant technical terms and ATS-friendly keywords
-              2. Focus on quantifiable achievements and outcomes (e.g., "Increased performance by 40%")
-              3. Mention specific technologies, methodologies, and tools used
-              4. Use action verbs at the beginning of highlights (e.g., "Implemented", "Developed", "Designed")
-              5. Include relevant industry-specific terminology
-              6. Make each highlight 1-2 sentences long with specific details
-              7. Ensure descriptions are comprehensive but concise (2-3 sentences)
-              Do not include any explanations, just the JSON array.
-            `; // source:
-            break;
+        case 'projects': // source: [cite: 105, 222]
+        prompt = `
+            You are a resume assistant helping to extract project information from user input.
+            Parse the following text, which may contain details for one or more projects, and extract the information into a structured format.
+            User input: "${normalizedInput}"
+
+            Return ONLY a JSON array where each object represents a project and has the following structure:
+            [
+            {
+                "name": "Project Name",
+                "description": "Comma-separated list of technologies used", // MODIFIED FIELD
+                "highlights": ["Achievement or feature 1", "Achievement or feature 2", ...]
+            }
+            // Additional project entries if provided
+            ]
+
+            Instructions for specific fields:
+            - "name": Extract the project's name accurately.
+            - "description": Extract ONLY the technologies mentioned for the project. Format them as a single comma-separated string (e.g., "React.js, Node.js, MongoDB"). Use proper capitalization (e.g., Tailwind CSS). Do NOT include any natural language description or prefixes like "Built with:". If no specific tech is mentioned, list general areas (e.g., "Web Development, API Integration"). // MODIFIED INSTRUCTIONS
+            - "highlights": Extract key achievements or features as an array of strings. Improve them for ATS:
+                1. Focus on quantifiable achievements and outcomes (e.g., "Increased performance by 40%")
+                2. Mention specific methodologies or impact where possible.
+                3. Use action verbs at the beginning (e.g., "Implemented", "Developed", "Designed")
+                4. Make each highlight concise (1-2 sentences) with specific details.
+
+            Do not include any explanations outside the JSON array. Just return the valid JSON array.
+        `; // source:with modifications
+        break;
         case 'positions': // source: [cite: 111, 228]
             prompt = `
               You are a resume assistant helping to extract work experience information from user input.

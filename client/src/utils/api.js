@@ -1,30 +1,23 @@
-// API service for resume chatbot
-const API_BASE_URL = 'http://localhost:5000';
-
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5000/api/resume'; // Updated base URL
 
 /**
- * Process user input for a specific resume section and question
+ * Process user input for a specific resume field
  * @param {string} input - User's input text
- * @param {string} section - Current resume section (e.g., 'personal_info', 'education')
+ * @param {string} section - Current resume section
  * @param {string} questionId - Current question ID
  * @param {object} resumeData - Current resume data
- * @returns {Promise<object>} - Response with message and updated resume data
+ * @returns {Promise<object>} - API response
  */
 export const processUserInput = async (input, section, questionId, resumeData) => {
   try {
-    console.log('Sending to /collect-resume:', { input, section, questionId, resumeData });
-    
-    const response = await axios.post(`${API_URL}/collect-resume`, {
+    const response = await axios.post(`${API_BASE_URL}/collect-resume`, { // Updated endpoint
       userInput: input,
       currentStage: section,
       currentQuestion: questionId,
       resumeData
     });
-    
-    console.log('Response from /collect-resume:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error processing user input:', error);
@@ -36,23 +29,19 @@ export const processUserInput = async (input, section, questionId, resumeData) =
 };
 
 /**
- * Process an entire resume section at once
+ * Process an entire resume section category at once
  * @param {string} input - User's input text for the entire section
- * @param {string} category - Resume section category (e.g., 'personal_info', 'education')
+ * @param {string} category - Resume section category
  * @param {object} resumeData - Current resume data
- * @returns {Promise<object>} - Response with message and updated resume data
+ * @returns {Promise<object>} - API response
  */
 export const processCategory = async (input, category, resumeData) => {
   try {
-    console.log('Sending to /collect-category:', { input, category, resumeData });
-    
-    const response = await axios.post(`${API_URL}/collect-category`, {
+    const response = await axios.post(`${API_BASE_URL}/collect-category`, { // Updated endpoint
       input,
       category,
       resumeData
     });
-    
-    console.log('Response from /collect-category:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error processing category:', error);
@@ -64,47 +53,33 @@ export const processCategory = async (input, category, resumeData) => {
 };
 
 /**
- * Process an entire resume section at once
- * @param {string} input - User's input text for the entire section
- * @param {string} category - Resume section category (e.g., 'personal_info', 'education')
+ * Generate a professional summary based on resume data
  * @param {object} resumeData - Current resume data
- * @returns {Promise<object>} - Response with message and updated resume data
+ * @returns {Promise<object>} - API response with generated summary
  */
-export const processCategoryEntireSection = async (input, category, resumeData) => {
+export const generateSummary = async (resumeData) => {
   try {
-    console.log('Sending to /collect-category:', { input, category, resumeData });
-    
-    const response = await axios.post(`${API_URL}/collect-category`, {
-      input,
-      category,
+    const response = await axios.post(`${API_BASE_URL}/generate-summary`, { // Updated endpoint
       resumeData
     });
-    
-    console.log('Response from /collect-category:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error processing category:', error);
-    throw error;
+    console.error('Error generating summary:', error);
+    // Re-throw the error so the calling component can handle it (e.g., show a specific error message)
+    throw error; 
   }
 };
 
 /**
- * Generate a professional summary based on resume data
- * @param {object} resumeData - Current resume data
- * @returns {Promise<object>} - Response with generated summary
+ * Fetch resume data
+ * @returns {Promise<object>} - API response with resume data
  */
-export const generateSummary = async (resumeData) => {
+export const getResumeData = async () => {
   try {
-    console.log('Sending to /api/generate-summary:', { resumeData });
-    
-    const response = await axios.post(`${API_URL}/generate-summary`, {
-      resumeData
-    });
-    
-    console.log('Response from /api/generate-summary:', response.data);
+    const response = await axios.get(`${API_BASE_URL}/resume-data`); // Added endpoint
     return response.data;
   } catch (error) {
-    console.error('Error generating summary:', error);
+    console.error('Error fetching resume data:', error);
     throw error;
   }
 };

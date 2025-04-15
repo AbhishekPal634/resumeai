@@ -1,30 +1,41 @@
-// source: [cite: 1]
 const express = require('express');
 const cors = require('cors');
-const config = require('./config'); // Load config first
+const dotenv = require('dotenv');
+const passport = require('./config/passport'); // Import passport config
 const resumeRoutes = require('./routes/resumeRoutes');
+const dbConnect = require('./config/dbConnect');
+const authRoutes = require('./routes/authRoutes'); // Import auth routes
 
-const app = express(); // source: [cite: 3]
-const PORT = config.port; // source: [cite: 3]
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 5000; // Provide a default port
+dbConnect(); // Connect to MongoDB
 
 // Middleware
-app.use(cors()); // source: [cite: 4]
-app.use(express.json()); // source: [cite: 4]
+app.use(cors());
+app.use(express.json());
+app.use(passport.initialize()); // Initialize Passport
 
 // Routes
-app.use('/', resumeRoutes); // Mount resume routes at the base path or '/api'
+app.use('/api/resume', resumeRoutes);
+app.use('/api/auth', authRoutes);
 
-// Basic root route (optional)
-app.get('/', (req, res) => {
-    res.send('Resume Builder API is running!');
+// Basic Error Handling Middleware (Add more robust error handling as needed)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // Start the server
-app.listen(PORT, () => { // source: [cite: 301]
-  console.log(`Server running on port ${PORT}`); // source: [cite: 301]
-  if (!config.geminiApiKey) {
-      console.warn('Warning: GEMINI_API_KEY is not set. Some features may not work.'); // source: [cite: 301]
-  } else {
-       console.log('Gemini API Key loaded.');
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  if (!process.env.GEMINI_API_KEY) {
+      console.warn('Warning: GEMINI_API_KEY is not set. Some features may not work.');
+  }
+  if (!process.env.JWT_SECRET) {
+      console.warn('Warning: JWT_SECRET is not set. Authentication will fail.');
+  }
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      console.warn('Warning: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is not set. Google OAuth will fail.');
   }
 });

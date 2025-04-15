@@ -12,6 +12,7 @@ import {
   FiArrowRight,
   FiSettings,
 } from "react-icons/fi";
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 // Import Dashboard Components
 import DashboardLayout from "../components/layouts/DashboardLayout";
@@ -23,6 +24,10 @@ import WelcomeHeader from "../components/dashboard/WelcomeHeader";
 // Main Dashboard Component
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get user from AuthContext
+
+  // Determine the user's display name
+  const displayName = user?.firstName ? user.firstName : user?.email ? user.email.split('@')[0] : 'User';
 
   const handleCreateResume = () => {
     navigate("/chatbot");
@@ -83,9 +88,9 @@ const UserDashboard = () => {
   return (
     <DashboardLayout>
       <div className="p-4 md:p-8 mt-12 md:mt-0 max-w-7xl mx-auto">
-        {/* Welcome Header */}
+        {/* Welcome Header - Pass dynamic displayName */}
         <div className="mb-8">
-          <WelcomeHeader userName="John" tokens={2} />
+          <WelcomeHeader userName={displayName} tokens={2} /> {/* Use displayName */}
         </div>
 
         {/* Stats Section */}

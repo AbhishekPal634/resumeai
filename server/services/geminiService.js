@@ -1,14 +1,16 @@
 // source: [cite: 2, 4]
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const config = require('../config');
+const dotenv = require('dotenv');
 
-const apiKey = config.geminiApiKey; // source: [cite: 4]
-if (!apiKey) { // source: [cite: 5]
+dotenv.config(); // Load environment variables from .env file
+
+const apiKey = process.env.GEMINI_API_KEY; 
+if (!apiKey) {
   console.error('GEMINI_API_KEY is not set. Please check your .env file or environment variables.');
 }
 // Initialize Gemini API safely
-const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null; // source: [cite: 6]
-const modelName = "gemini-1.5-flash"; // Define model name centrally
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null; 
+const modelName = "gemini-1.5-flash"; 
 
 // Helper to get model, handles missing API key
 const getModel = () => {
@@ -62,7 +64,7 @@ const generateAndParseJson = async (prompt) => {
                  rawResponse: textResponse
             };
         }
-    } catch (error) { // source: [cite: 87, 142, 247, 285]
+    } catch (error) { 
         console.error("Error generating content with Gemini:", error);
         return {
             success: false,

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormInput from "../components/auth/FormInput";
 import PasswordInput from "../components/auth/PasswordInput";
 import SocialLogin from "../components/auth/SocialLogin";
+import { registerUser } from "../utils/authApi"; // Import the API function
+import { useAuth } from "../context/AuthContext"; // Import the Auth context hook
 
 const CAROUSEL_ITEMS = [
   {
@@ -31,6 +33,10 @@ const Signup = () => {
     password: "",
     agreeToTerms: false,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { loginAction } = useAuth(); // Get login action from context
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -40,10 +46,26 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your form submission logic here
+    if (!formData.agreeToTerms) {
+      setError("You must agree to the Terms & Conditions.");
+      return;
+    }
+    setError(null); // Clear previous errors
+    setLoading(true);
+    try {
+      const { firstName, lastName, email, password } = formData;
+      // Ensure all required fields are passed to the API
+      const data = await registerUser({ firstName, lastName, email, password });
+      loginAction(data); // Update auth context with token and user data after registration
+      navigate("/dashboard"); // Redirect to dashboard on successful registration
+    } catch (err) {
+      // Use error message from backend if available
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,6 +89,7 @@ const Signup = () => {
               value={formData.firstName}
               onChange={handleChange}
               placeholder="First name"
+              required // Add required attribute
             />
           </div>
           <div>
@@ -75,6 +98,7 @@ const Signup = () => {
               value={formData.lastName}
               onChange={handleChange}
               placeholder="Last name"
+              required // Add required attribute
             />
           </div>
         </div>
@@ -86,13 +110,16 @@ const Signup = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
+            required // Add required attribute
           />
         </div>
 
         <PasswordInput
+          name="password" // Add name prop
           value={formData.password}
           onChange={handleChange}
           placeholder="Enter your password"
+          required // Add required attribute
         />
 
         <div>
@@ -103,7 +130,7 @@ const Signup = () => {
               checked={formData.agreeToTerms}
               onChange={handleChange}
               className="mr-2 h-5 w-5 accent-indigo-600"
-              required
+              required // Keep required on the checkbox itself
             />
             <span>
               I agree to the{" "}
@@ -117,11 +144,23 @@ const Signup = () => {
           </label>
         </div>
 
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 cursor-pointer transition duration-300 flex items-center justify-center"
+          disabled={loading} // Disable button while loading
+          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 cursor-pointer transition duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Create account
+          {loading ? (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            "Create account"
+          )}
         </button>
 
         <SocialLogin />

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useNavigate
 import { motion } from "framer-motion";
 import { FiUser, FiGrid, FiSettings, FiArrowLeft } from "react-icons/fi";
 import SidebarComponent from "../sidebar/SidebarComponent";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
 
 const DashboardLayout = ({ children }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize navigate
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { logOut, user } = useAuth(); // Get logOut function and user from context
 
   // Check if we're on a mobile device
   useEffect(() => {
@@ -26,7 +28,6 @@ const DashboardLayout = ({ children }) => {
 
   // Get current path to determine active link
   const currentPath = location.pathname;
-  //   console.log(currentPath);
 
   // Navigation links configuration
   const links = [
@@ -50,17 +51,32 @@ const DashboardLayout = ({ children }) => {
     },
     {
       label: "Logout",
-      href: "/",
+      href: "#", // Use # or similar for non-navigating actions
       icon: <FiArrowLeft className="w-5 h-5" />,
       active: false,
+      action: () => handleLogout() // Add action property for logout
     },
   ];
 
-  // Handler for logout
+  // Handler for logout - calls logOut from context and then navigates
   const handleLogout = () => {
-    // In a real app, you might want to clear auth tokens, etc.
-    navigate("/");
+    logOut();
+    navigate("/"); // Redirect to landing page after logout
+    // Or navigate("/login"); // Redirect to login page
   };
+
+  // Determine user initials and name
+  const userInitials = user?.firstName && user?.lastName 
+    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() 
+    : user?.email 
+    ? user.email[0].toUpperCase() 
+    : '??';
+  const userName = user?.firstName && user?.lastName 
+    ? `${user.firstName} ${user.lastName}` 
+    : user?.email 
+    ? user.email 
+    : 'User';
+
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden">
@@ -69,11 +85,11 @@ const DashboardLayout = ({ children }) => {
         <SidebarComponent
           open={open}
           setOpen={setOpen}
-          links={links}
-          userInitials="JD"
-          userName="John Doe"
-          handleLogout={handleLogout}
-          sidebarWidth="w-52" // Reduced from w-60 to w-52 (13rem)
+          links={links} // Pass the updated links array
+          userInitials={userInitials}
+          userName={userName}
+          // handleLogout prop might no longer be needed if SidebarComponent uses link.action
+          sidebarWidth="w-52"
           collapsedWidth="w-14"
         />
       </div>

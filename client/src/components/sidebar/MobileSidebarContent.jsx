@@ -6,11 +6,11 @@ const MobileSidebarContent = ({
   links,
   userName,
   userInitials,
-  handleLogout,
   setOpen,
 }) => {
   // Separate regular links and logout link
-  const navigationLinks = links.filter((link) => link.href !== "/");
+  const navigationLinks = links.filter((link) => link.action === undefined);
+  const logoutLink = links.find((link) => link.action !== undefined);
 
   return (
     <div className="flex flex-col h-full pt-12">
@@ -21,9 +21,17 @@ const MobileSidebarContent = ({
         </div>
         <div className="ml-4">
           <h3 className="text-lg font-semibold text-white">{userName}</h3>
-          <button className="text-red-400 text-sm" onClick={handleLogout}>
-            Sign out
-          </button>
+          {logoutLink && (
+            <button
+              className="text-red-400 text-sm"
+              onClick={() => {
+                logoutLink.action(); // Call the action from the link
+                setOpen(false); // Close the sidebar after action
+              }}
+            >
+              Sign out
+            </button>
+          )}
         </div>
       </div>
 
@@ -36,7 +44,7 @@ const MobileSidebarContent = ({
                 to={link.href}
                 className={`flex items-center px-3 py-3 text-base rounded-lg ${
                   link.active
-                    ? "bg-indigo-900/50 text-white font-medium" // Active state styling
+                    ? "bg-indigo-900/50 text-white font-medium"
                     : "text-gray-300 hover:bg-gray-800"
                 }`}
                 onClick={() => setOpen(false)}

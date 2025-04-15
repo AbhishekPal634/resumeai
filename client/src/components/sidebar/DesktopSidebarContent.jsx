@@ -7,11 +7,10 @@ const DesktopSidebarContent = ({
   links,
   userName,
   userInitials,
-  handleLogout,
 }) => {
   // Separate regular links and logout link
-  const navigationLinks = links.filter((link) => link.href !== "/");
-  const logoutLink = links.find((link) => link.href === "/");
+  const navigationLinks = links.filter((link) => link.action === undefined); // Filter by checking if action exists
+  const logoutLink = links.find((link) => link.action !== undefined); // Find the link with an action
 
   return (
     <>
@@ -71,15 +70,15 @@ const DesktopSidebarContent = ({
         </ul>
       </div>
 
-      {/* Logout Link - positioned above user profile */}
+      {/* Logout Button */}
       <div className="px-3 mb-3">
         {logoutLink && (
-          <Link
-            to={logoutLink.href}
-            className={`flex items-center rounded-lg transition-colors 
+          <button
+            type="button"
+            className={`flex items-center w-full rounded-lg transition-colors
               hover:bg-red-900/20 text-red-400
               ${open ? "px-3 py-2.5 justify-start" : "p-2.5 justify-center"}`}
-            onClick={handleLogout}
+            onClick={logoutLink.action} // Use action from the link object
           >
             {logoutLink.icon}
             <AnimatePresence>
@@ -95,7 +94,7 @@ const DesktopSidebarContent = ({
                 </motion.span>
               )}
             </AnimatePresence>
-          </Link>
+          </button>
         )}
       </div>
 

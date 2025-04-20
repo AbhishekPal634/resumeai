@@ -1,4 +1,3 @@
-// source: [cite: 2, 4]
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 
@@ -19,7 +18,7 @@ const getModel = () => {
         return null;
     }
     try {
-        return genAI.getGenerativeModel({ model: modelName }); // source: [cite: 7, 17, 89, 145, 206, 275]
+        return genAI.getGenerativeModel({ model: modelName });
     } catch (error) {
         console.error("Error getting Gemini model:", error);
         return null;
@@ -39,24 +38,24 @@ const generateAndParseJson = async (prompt) => {
     }
 
     try {
-        const result = await model.generateContent(prompt); // source: [cite: 13, 79, 123, 152, 201, 241, 260, 282]
-        const response = await result.response; // source: [cite: 14, 80, 124, 152, 201, 242, 260, 283]
-        const textResponse = response.text(); // source: [cite: 14, 80, 124, 153, 201, 242, 260, 283]
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const textResponse = response.text();
 
         // Try parsing JSON response (can be wrapped in markdown)
         let parsedData;
         try {
-            const jsonMatch = textResponse.match(/```json\n([\s\S]*?)\n```/) || // source: [cite: 244]
-                              textResponse.match(/```\n([\s\S]*?)\n```/) || // source: [cite: 245]
-                              textResponse.match(/{[\s\S]*?}/) || // source: [cite: 245]
-                              textResponse.match(/\[([\s\S]*?)\]/); // source: [cite: 245]
+            const jsonMatch = textResponse.match(/```json\n([\s\S]*?)\n```/) ||
+                              textResponse.match(/```\n([\s\S]*?)\n```/) ||
+                              textResponse.match(/{[\s\S]*?}/) ||
+                              textResponse.match(/\[([\s\S]*?)\]/);
 
-            const jsonString = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : textResponse; // source: [cite: 245]
-            parsedData = JSON.parse(jsonString.replace(/^```json|```$/g, '').trim()); // source: [cite: 80, 124, 245]
-            return { success: true, data: parsedData, message: "Success", rawResponse: textResponse }; // source: [cite: 246]
-        } catch (parseError) { // source: [cite: 85, 140, 246]
-            console.error("Error parsing Gemini JSON response:", parseError); // source: [cite: 85, 140, 247]
-            console.log("Raw Gemini response:", textResponse); // source: [cite: 85, 140, 247]
+            const jsonString = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : textResponse;
+            parsedData = JSON.parse(jsonString.replace(/^```json|```$/g, '').trim());
+            return { success: true, data: parsedData, message: "Success", rawResponse: textResponse };
+        } catch (parseError) {
+            console.error("Error parsing Gemini JSON response:", parseError);
+            console.log("Raw Gemini response:", textResponse);
             return {
                  success: false,
                  data: null,
@@ -76,14 +75,12 @@ const generateAndParseJson = async (prompt) => {
 };
 
 
-// Helper function to normalize user input (Original logic)
-// source: [cite: 7]
+// Helper function to normalize user input
 const normalizeUserInput = async (input, category) => {
     const model = getModel();
     if (!model) return input; // Return original if model unavailable
 
     try {
-        // source: [cite: 8, 11]
         let prompt = `
           You are an AI assistant helping to normalize and correct user input for a resume.
           The user has provided the following input for their ${category} section:
@@ -101,39 +98,35 @@ const normalizeUserInput = async (input, category) => {
           Preserve the original meaning and information.
         `;
 
-        if (category === 'personal_info') { // source: [cite: 11]
+        if (category === 'personal_info') {
           prompt += `
             Pay special attention to LinkedIn and GitHub URLs:
             - If only a username is provided for LinkedIn (e.g., "linkedin: johndoe"), convert to "https://www.linkedin.com/in/johndoe"
             - If only a username is provided for GitHub (e.g., "github: jdoe"), convert to "https://github.com/jdoe"
             - If the URL is already complete and correct, leave it as is
-          `; // source: [cite: 12]
+          `;
         }
 
-        const result = await model.generateContent(prompt); // source: [cite: 13]
-        const response = await result.response; // source: [cite: 14]
-        const normalizedInput = response.text().trim(); // source: [cite: 14]
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const normalizedInput = response.text().trim();
 
-        console.log('Original input:', input.substring(0, 50) + '...'); // source: [cite: 14]
-        console.log('Normalized input:', normalizedInput.substring(0, 50) + '...'); // source: [cite: 15]
-        return normalizedInput; // source: [cite: 15]
-    } catch (error) { // source: [cite: 15]
+        console.log('Original input:', input.substring(0, 50) + '...');
+        console.log('Normalized input:', normalizedInput.substring(0, 50) + '...');
+        return normalizedInput;
+    } catch (error) {
         console.error('Error normalizing user input:', error);
-        return input; // Return original input if normalization fails // source: [cite: 16]
+        return input; // Return original input if normalization fails
     }
 };
 
 
-// Function to process individual user input field (Original logic from /collect-resume)
-// source: [cite: 17]
+// Function to process individual user input field
 async function processFieldWithGemini(userInput, stage, question) {
-    // Construct the prompt based on the original processWithGemini logic
-    // This involves a large switch/case structure based on stage and question
-    // Referencing lines
+    // Construct prompt based on the stage and question
     let prompt = "";
-     // --- Reconstruct the prompt based on lines---
-     // Example for personal_info -> email:
-     if (stage === "personal_info" && question === "email") { // source: [cite: 19]
+     
+     if (stage === "personal_info" && question === "email") {
           prompt = `
             As a resume validation expert, strictly validate if the following input is a valid email address: "${userInput}".
             Do NOT correct or modify the input - only validate if it's properly formatted.
@@ -144,10 +137,9 @@ async function processFieldWithGemini(userInput, stage, question) {
               "formattedValue": string, // the exact input if valid, empty string if invalid
               "message": string // explanation message
             }
-          `; // source:
+          `;
      }
-      // ... add all other cases from the original function ...
-      else if (stage === "personal_info" && question === "linkedin") { // source: [cite: 23]
+      else if (stage === "personal_info" && question === "linkedin") {
             prompt = `
               As a resume validation expert, strictly validate if the following input is a valid LinkedIn profile URL: "${userInput}".
               Do NOT correct random text or gibberish - only format properly structured URLs.
@@ -158,8 +150,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // properly formatted URL if valid, empty string if invalid
                 "message": string // explanation message
               }
-            `; // source:
-        } else if (stage === "personal_info" && question === "github") { // source: [cite: 27]
+            `;
+        } else if (stage === "personal_info" && question === "github") {
             prompt = `
               As a resume validation expert, strictly validate if the following input is a valid GitHub profile URL: "${userInput}".
               Do NOT correct random text or gibberish - only format properly structured URLs.
@@ -171,8 +163,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // properly formatted URL if valid, empty string if "none" or invalid
                 "message": string // explanation message
               }
-            `; // source:
-        } else if (stage === "personal_info" && question === "phone") { // source: [cite: 32]
+            `;
+        } else if (stage === "personal_info" && question === "phone") {
             prompt = `
               As a resume validation expert, strictly validate if the following input is a valid phone number: "${userInput}".
               Do NOT create a phone number from random text - only format recognizable phone numbers.
@@ -182,8 +174,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // formatted phone number if valid, empty string if invalid
                 "message": string // explanation message
               }
-            `; // source:
-        } else if (stage === "personal_info") { // source: [cite: 35]
+            `;
+        } else if (stage === "personal_info") {
             prompt = `
               As a resume validation expert, validate if the following input for "${question}" is properly formatted: "${userInput}".
               Do NOT create content from random text or gibberish.
@@ -194,9 +186,9 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // properly formatted value if valid, empty string if invalid
                 "message": string // explanation message
               }
-            `; // source:
-        } else if (stage === "projects") { // source: [cite: 38]
-           if (question === "github_link" || question === "demo_link") { // source: [cite: 38]
+            `;
+        } else if (stage === "projects") {
+           if (question === "github_link" || question === "demo_link") {
                prompt = `
                  As an ATS expert, validate if the following input is a valid URL for a project ${
                    question === "github_link" ? "GitHub repository" : "demo"
@@ -210,8 +202,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                    "formattedValue": string, // the validated URL or empty string if none/invalid
                    "message": string // explanation or confirmation message
                  }
-               `; // source:
-           } else if (question === "points" || question === "more_points") { // source: [cite: 43]
+               `;
+           } else if (question === "points" || question === "more_points") {
                prompt = `
                  As an ATS expert, improve the following project bullet point for a resume: "${userInput}".
                  If it's "done", treat this as a signal word (not content) and return it as formatted value with isValid true.
@@ -227,8 +219,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                    "formattedValue": string, // the improved bullet point or "done" if that was the input
                    "message": string // explanation of what was improved
                  }
-               `; // source:
-           } else if (question === "description") { // source: [cite: 48]
+               `;
+           } else if (question === "description") {
                prompt = `
                  As an ATS expert, extract the technology stack from the following project description: "${userInput}".
                  Format the tech stack as a simple comma-separated list WITHOUT any explanatory text or prefix:
@@ -248,8 +240,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                    "formattedValue": string, // the formatted tech stack list
                    "message": string // explanation of what was improved
                  }
-               `; // source:
-           } else { // source: [cite: 53]
+               `;
+           } else {
                prompt = `
                  As an ATS expert, improve the following input for the "${question}" field of a project: "${userInput}".
                  Format it to be concise, professional, and ATS-friendly.
@@ -260,9 +252,9 @@ async function processFieldWithGemini(userInput, stage, question) {
                    "formattedValue": string, // the improved text
                    "message": string // explanation of what was improved
                  }
-               `; // source:
+               `;
            }
-        } else if (stage === "technical_skills") { // source: [cite: 56]
+        } else if (stage === "technical_skills") {
             prompt = `
               As an ATS expert, validate and enhance the following technical skills input for "${question}": "${userInput}".
               Even if the input is poorly formatted, extract any valid technologies and format them professionally:
@@ -277,8 +269,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // the formatted skills list
                 "message": string // explanation of what was improved
               }
-            `; // source:
-        } else if (stage === "education") { // source: [cite: 60]
+            `;
+        } else if (stage === "education") {
             prompt = `
               As an ATS expert, enhance the following education information for "${question}": "${userInput}".
               Format it to be professional and consistent for a resume.
@@ -289,9 +281,9 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // the improved education information
                 "message": string // explanation of what was improved
               }
-            `; // source:
-        } else if (stage === "positions") { // source: [cite: 64]
-            if (question === "points" || question === "more_points") { // source: [cite: 64]
+            `;
+        } else if (stage === "positions") {
+            if (question === "points" || question === "more_points") {
                 prompt = `
                   As an ATS expert, improve the following responsibility bullet point for a resume: "${userInput}".
                   If it's "done", treat this as a signal word (not content) and return it as formatted value with isValid true.
@@ -307,8 +299,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                     "formattedValue": string, // the improved bullet point or "done" if that was the input
                     "message": string // explanation of what was improved
                   }
-                `; // source:
-            } else { // source: [cite: 69]
+                `;
+            } else {
                 prompt = `
                   As an ATS expert, enhance the following position information for "${question}": "${userInput}".
                   Format it to be professional and consistent for a resume.
@@ -319,9 +311,9 @@ async function processFieldWithGemini(userInput, stage, question) {
                     "formattedValue": string, // the improved position information
                     "message": string // explanation of what was improved
                   }
-                `; // source:
+                `;
             }
-        } else if (stage === "achievements") { // source: [cite: 73]
+        } else if (stage === "achievements") {
             prompt = `
               As an ATS expert, enhance the following achievement for a resume: "${userInput}".
               Transform it into a professional, impactful achievement statement:
@@ -336,8 +328,8 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // the enhanced achievement
                 "message": string // explanation of what was improved
               }
-            `; // source:
-        } else { // source: [cite: 76]
+            `;
+        } else {
             // General validation for other questions
             prompt = `
               As an ATS expert, improve the following input for a resume: "${userInput}".
@@ -349,7 +341,7 @@ async function processFieldWithGemini(userInput, stage, question) {
                 "formattedValue": string, // the improved text
                 "message": string // explanation of what was improved
               }
-            `; // source:
+            `;
         }
 
 
@@ -360,7 +352,7 @@ async function processFieldWithGemini(userInput, stage, question) {
         if (stage !== "personal_info" && result.data.isValid) {
             const lowerInput = userInput.toLowerCase();
             if (lowerInput !== "done" && lowerInput !== "yes" && lowerInput !== "no" && result.data.formattedValue !== userInput) {
-                result.data.message = `I've improved this to be more ATS-friendly: ${result.data.formattedValue}`; // source: [cite: 83]
+                result.data.message = `I've improved this to be more ATS-friendly: ${result.data.formattedValue}`;
             }
         }
          // Ensure the structure matches what the controller expects {isValid, formattedValue, message}
@@ -372,25 +364,23 @@ async function processFieldWithGemini(userInput, stage, question) {
     } else {
         // Return a default error structure if Gemini call failed or parsing failed
         return {
-            isValid: false, // source: [cite: 86, 88]
-            formattedValue: "", // source: [cite: 86, 88]
-            message: result.message || "I couldn't validate your input properly. Please try again.", // source: [cite: 86, 88]
+            isValid: false,
+            formattedValue: "",
+            message: result.message || "I couldn't validate your input properly. Please try again.",
         };
     }
 }
 
 
-// Function to process entire category (Original logic from /collect-category and /api/collect-category)
-// source: [cite: 89, 205]
+// Function to process entire category
 async function processCategoryWithGemini(userInput, category) {
-     // Normalize the input first (using the logic from /api/collect-category)
-    const normalizedInput = await normalizeUserInput(userInput, category); // source: [cite: 206]
+     // Normalize the input first
+    const normalizedInput = await normalizeUserInput(userInput, category);
 
-    // Construct prompt based on category, referencing linesand
-    // Choose the more detailed prompts from /api/collect-category where available
+    // Construct prompt based on category
     let prompt = "";
     switch (category) {
-        case 'personal_info': // source: [cite: 91, 206]
+        case 'personal_info':
             prompt = `
                You are a resume assistant helping to extract personal information from user input.
                Parse the following text and extract the personal information in a structured format.
@@ -410,9 +400,9 @@ async function processCategoryWithGemini(userInput, category) {
                - GitHub URLs are in the format "https://github.com/username"
                - All URLs include the https:// prefix
                Do not include any explanations, just the JSON object.
-             `; // source:
+             `;
             break;
-         case 'education': // source: [cite: 96, 212]
+         case 'education':
             prompt = `
               You are a resume assistant helping to extract education information from user input.
               Parse the following text and extract the education information in a structured format.
@@ -430,9 +420,9 @@ async function processCategoryWithGemini(userInput, category) {
                 // Additional education entries if provided
               ]
               Do not include any explanations, just the JSON array.
-            `; // source:
+            `;
             break;
-         case 'technical_skills': // source: [cite: 101, 217]
+         case 'technical_skills':
             prompt = `
               You are a resume assistant helping to categorize technical skills from user input.
               Parse the following text and categorize the skills into appropriate categories.
@@ -451,9 +441,9 @@ async function processCategoryWithGemini(userInput, category) {
               3. You categorize each skill appropriately
               4. You list the most important/relevant skills first in each category
               Do not include any explanations, just the JSON object.
-            `; // source:
+            `;
             break;
-        case 'projects': // source: [cite: 105, 222]
+        case 'projects':
         prompt = `
             You are a resume assistant helping to extract project information from user input.
             Parse the following text, which may contain details for one or more projects, and extract the information into a structured format.
@@ -471,7 +461,7 @@ async function processCategoryWithGemini(userInput, category) {
 
             Instructions for specific fields:
             - "name": Extract the project's name accurately.
-            - "description": Extract ONLY the technologies mentioned for the project. Format them as a single comma-separated string (e.g., "React.js, Node.js, MongoDB"). Use proper capitalization (e.g., Tailwind CSS). Do NOT include any natural language description or prefixes like "Built with:". If no specific tech is mentioned, list general areas (e.g., "Web Development, API Integration"). // MODIFIED INSTRUCTIONS
+            - "description": Extract ONLY the technologies mentioned for the project. Format them as a single comma-separated string (e.g., "React.js, Node.js, MongoDB"). Use proper capitalization (e.g., Tailwind CSS). Do NOT include any natural language description or prefixes like "Built with:". If no specific tech is mentioned, list general areas (e.g., "Web Development, API Integration").
             - "highlights": Extract key achievements or features as an array of strings. Improve them for ATS:
                 1. Focus on quantifiable achievements and outcomes (e.g., "Increased performance by 40%")
                 2. Mention specific methodologies or impact where possible.
@@ -479,9 +469,9 @@ async function processCategoryWithGemini(userInput, category) {
                 4. Make each highlight concise (1-2 sentences) with specific details.
 
             Do not include any explanations outside the JSON array. Just return the valid JSON array.
-        `; // source:with modifications
+        `;
         break;
-        case 'positions': // source: [cite: 111, 228]
+        case 'positions':
             prompt = `
               You are a resume assistant helping to extract work experience information from user input.
               Parse the following text and extract the work experience information in a structured format.
@@ -507,9 +497,9 @@ async function processCategoryWithGemini(userInput, category) {
               6. Make each highlight 1-2 sentences long with specific details
               7. Ensure summaries are comprehensive but concise (2-3 sentences)
               Do not include any explanations, just the JSON array.
-            `; // source:
+            `;
             break;
-         case 'achievements': // source: [cite: 118, 234]
+         case 'achievements':
             prompt = `
               You are a resume assistant helping to extract achievements, awards, and certifications from user input.
               Parse the following text and extract the achievements information in a structured format.
@@ -531,9 +521,9 @@ async function processCategoryWithGemini(userInput, category) {
               4. Mention skills or competencies demonstrated by the achievement
               5. Make each summary 1-2 sentences long with specific details
               Do not include any explanations, just the JSON array.
-            `; // source:
+            `;
             break;
-        default: // source: [cite: 121, 240]
+        default:
             console.warn(`Unknown category for Gemini processing: ${category}`);
              return {
                 isValid: false,
@@ -545,13 +535,12 @@ async function processCategoryWithGemini(userInput, category) {
     const result = await generateAndParseJson(prompt);
 
     if (result.success && result.data) {
-         // Post-processing for specific categories if needed (like ensuring 'roles' is a string in 'positions')
+         // Post-processing for specific categories if needed
         let finalData = result.data;
-        if (category === "positions" && Array.isArray(finalData)) { // source: [cite: 126]
+        if (category === "positions" && Array.isArray(finalData)) {
              finalData = finalData.map(position => {
-                 // Original logic expected 'roles' field, new logic uses 'position'
-                 // Adjust if necessary based on how resumeService consumes this
-                 if (Array.isArray(position.position)) { // Adapt if needed
+                 // Convert position array to string if needed
+                 if (Array.isArray(position.position)) {
                      position.position = position.position.join(", ");
                  }
                  return position;
@@ -559,33 +548,32 @@ async function processCategoryWithGemini(userInput, category) {
          }
 
         // Generate confirmation message
-        const confirmationMessage = await generateConfirmationMessage(category); // source: [cite: 197, 256]
+        const confirmationMessage = await generateConfirmationMessage(category);
 
         return {
             isValid: true, // Assume valid if parsing succeeded
             formattedData: finalData,
-            message: confirmationMessage || "Information processed successfully.", // Use generated or default message // source: [cite: 201, 261]
+            message: confirmationMessage || "Information processed successfully.",
         };
     } else {
          // If Gemini failed or parsing failed
         return {
-            isValid: false, // source: [cite: 141, 143, 247]
-            formattedData: null, // source: [cite: 141, 143]
-            message: result.message || "I couldn't structure your information properly. Please provide it in the suggested format.", // source: [cite: 141, 143, 247]
+            isValid: false,
+            formattedData: null,
+            message: result.message || "I couldn't structure your information properly. Please provide it in the suggested format.",
         };
     }
 }
 
-// Function to generate a professional summary (Original logic from /api/generate-summary)
-// source: [cite: 264]
+// Function to generate a professional summary
 async function generateProfessionalSummary(resumeData) {
     const model = getModel();
     if (!model) {
-        console.warn('No Gemini API key available - using fallback summary generation'); // source: [cite: 264]
+        console.warn('No Gemini API key available - using fallback summary generation');
         return generateFallbackSummary(resumeData, true); // Generate fallback
     }
 
-    // Construct prompt based on lines
+    // Construct prompt based on resume data
      const prompt = `
        You are a professional resume writer tasked with creating a compelling professional summary.
        Based on the following resume information, create a concise, powerful professional summary (3-4 sentences)
@@ -603,44 +591,43 @@ async function generateProfessionalSummary(resumeData) {
        ${JSON.stringify(resumeData, null, 2)}
        Return ONLY the professional summary text, without any additional explanations or formatting.
        The summary should be approximately 50-75 words.
-     `; // source:
+     `;
 
     try {
-        console.log('Generating professional summary with Gemini...'); // source: [cite: 281]
-        const result = await model.generateContent(prompt); // source: [cite: 282]
-        const response = await result.response; // source: [cite: 283]
-        const summary = response.text().trim(); // source: [cite: 283]
-        console.log('Generated summary:', summary); // source: [cite: 283]
-        return { summary, success: true, fallback: false }; // source: [cite: 284]
-    } catch (error) { // source: [cite: 285]
+        console.log('Generating professional summary with Gemini...');
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const summary = response.text().trim();
+        console.log('Generated summary:', summary);
+        return { summary, success: true, fallback: false };
+    } catch (error) {
         console.error('Error generating professional summary with Gemini:', error);
-        return generateFallbackSummary(resumeData, true); // Generate fallback on error // source: [cite: 286, 300]
+        return generateFallbackSummary(resumeData, true); // Generate fallback on error
     }
 }
 
-// Helper to generate fallback summary
-// source: [cite: 265, 286]
+// Helper to generate fallback summary when Gemini is unavailable
 function generateFallbackSummary(resumeData, isFallback = false) {
      try {
-        const name = resumeData?.basics?.name || ''; // source: [cite: 265, 287]
-        let allSkills = []; // source: [cite: 265, 288]
-        if (resumeData?.skills) { // source: [cite: 265, 289]
+        const name = resumeData?.basics?.name || '';
+        let allSkills = [];
+        if (resumeData?.skills) {
             Object.values(resumeData.skills).forEach(categorySkills => {
-                if (Array.isArray(categorySkills)) { // source: [cite: 265, 289]
-                    allSkills = [...allSkills, ...categorySkills]; // source: [cite: 266, 289]
+                if (Array.isArray(categorySkills)) {
+                    allSkills = [...allSkills, ...categorySkills];
                 }
             });
         }
-        const skills = allSkills.slice(0, 3).join(', '); // source: [cite: 266, 290]
-        const experience = resumeData?.experience?.length > 0 ? // source: [cite: 267, 291]
-            `${resumeData.experience[0].position} at ${resumeData.experience[0].company || resumeData.experience[0].organization}` : ''; // source: [cite: 268, 292]
-        const education = resumeData?.education?.length > 0 ? // source: [cite: 268, 292]
-            `${resumeData.education[0].studyType || ''} in ${resumeData.education[0].area || ''} from ${resumeData.education[0].institution || ''}`.trim() : ''; // source: [cite: 269, 293]
+        const skills = allSkills.slice(0, 3).join(', ');
+        const experience = resumeData?.experience?.length > 0 ?
+            `${resumeData.experience[0].position} at ${resumeData.experience[0].company || resumeData.experience[0].organization}` : '';
+        const education = resumeData?.education?.length > 0 ?
+            `${resumeData.education[0].studyType || ''} in ${resumeData.education[0].area || ''} from ${resumeData.education[0].institution || ''}`.trim() : '';
 
-        const fallbackSummary = `Experienced ${skills ? `${skills} ` : ''}professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}${education ? `Educated with ${education}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`; // source: [cite: 270-273, 294-297]
+        const fallbackSummary = `Experienced ${skills ? `${skills} ` : ''}professional${name ? ' ' + name : ''} with expertise in ${skills || 'various technical skills'}. ${experience ? `Previously worked as ${experience}. ` : ''}${education ? `Educated with ${education}. ` : ''}Dedicated to delivering high-quality results and continuously improving skills.`;
 
-        return { summary: fallbackSummary, success: true, fallback: isFallback }; // source: [cite: 274, 298]
-     } catch (error) { // source: [cite: 299]
+        return { summary: fallbackSummary, success: true, fallback: isFallback };
+     } catch (error) {
          console.error("Error generating fallback summary:", error);
           return { summary: "Dedicated professional seeking new opportunities.", success: true, fallback: true };
      }
@@ -648,7 +635,6 @@ function generateFallbackSummary(resumeData, isFallback = false) {
 
 
 // Helper to generate confirmation message
-// source: [cite: 197, 256]
 async function generateConfirmationMessage(category) {
     const model = getModel();
     if (!model) return `Got it! Information for ${category} has been processed.`; // Fallback if model unavailable
@@ -661,12 +647,12 @@ async function generateConfirmationMessage(category) {
       Do not list the information back to them.
       Example: "Great, I've added your project details! What's next?"
       Example: "Okay, got your skills listed. Ready for the next section?"
-    `; // source: [cite: 197-201, 256-260]
+    `;
 
     try {
-        const result = await model.generateContent(confirmationPrompt); // source: [cite: 201, 260]
-        const response = await result.response; // source: [cite: 201, 260]
-        return response.text().trim(); // source: [cite: 201, 260]
+        const result = await model.generateContent(confirmationPrompt);
+        const response = await result.response;
+        return response.text().trim();
     } catch (error) {
         console.error("Error generating confirmation message:", error);
         return `Got it! Information for ${category} has been processed.`; // Fallback on error
@@ -674,10 +660,9 @@ async function generateConfirmationMessage(category) {
 }
 
 
-// Function to normalize project descriptions (can be triggered before sending final data)
-// source: [cite: 144]
+// Function to normalize project descriptions to tech stack format
 async function normalizeProjectDescriptions(resumeData) {
-    if (!resumeData || !resumeData.projects || !Array.isArray(resumeData.projects)) { // source: [cite: 144]
+    if (!resumeData || !resumeData.projects || !Array.isArray(resumeData.projects)) {
         return resumeData;
     }
 
@@ -688,12 +673,11 @@ async function normalizeProjectDescriptions(resumeData) {
      }
 
     try {
-        const updatedResumeData = JSON.parse(JSON.stringify(resumeData)); // source: [cite: 146]
-        for (let i = 0; i < updatedResumeData.projects.length; i++) { // source: [cite: 147]
+        const updatedResumeData = JSON.parse(JSON.stringify(resumeData));
+        for (let i = 0; i < updatedResumeData.projects.length; i++) {
             const project = updatedResumeData.projects[i];
-            // Check if description exists and looks like a description (not comma-separated list)
-            // Adjust condition based on the expected output of processCategoryWithGemini
-            if (!project.description || project.description.includes(',')) { // source: [cite: 148] // Maybe check length or keywords instead
+            // Skip if description is already in tech stack format
+            if (!project.description || project.description.includes(',')) {
                 continue;
             }
 
@@ -703,27 +687,26 @@ async function normalizeProjectDescriptions(resumeData) {
               Example: "React.js, Node.js, MongoDB"
               Extract all technologies mentioned and list them with proper capitalization and formatting.
               If no specific technologies are mentioned, extract the general tech areas (Web Development, Mobile App, etc.).
-            `; // source:
+            `;
 
             try {
-                const result = await model.generateContent(prompt); // source: [cite: 152]
-                const response = await result.response; // source: [cite: 152]
-                const techStackDescription = response.text().trim(); // source: [cite: 153]
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const techStackDescription = response.text().trim();
 
-                if (techStackDescription && techStackDescription.length > 3) { // source: [cite: 153]
+                if (techStackDescription && techStackDescription.length > 3) {
                     // Replace the 'description' field with the tech stack
-                    // Or, add a new field like 'techStack' if you want to keep the original desc
                     updatedResumeData.projects[i].description = techStackDescription;
                 }
-            } catch (error) { // source: [cite: 154]
+            } catch (error) {
                 console.error(`Error normalizing project description for project ${i}:`, error);
-                // Keep original description on error // source: [cite: 155]
+                // Keep original description on error
             }
         }
-        return updatedResumeData; // source: [cite: 155]
-    } catch (error) { // source: [cite: 156]
+        return updatedResumeData;
+    } catch (error) {
         console.error('Error in normalizeProjectDescriptions:', error);
-        return resumeData; // Return original on error // source: [cite: 157]
+        return resumeData; // Return original on error
     }
 }
 
@@ -733,5 +716,5 @@ module.exports = {
     processCategoryWithGemini,
     generateProfessionalSummary,
     normalizeProjectDescriptions,
-    normalizeUserInput // Export if needed directly by controller
+    normalizeUserInput
 };

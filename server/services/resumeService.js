@@ -1,4 +1,3 @@
-// source: [cite: 3]
 // Simple in-memory store for resume data
 let resumeData = {
     basics: {
@@ -42,74 +41,74 @@ let resumeData = {
       case "personal_info":
         if (!updatedData.basics) updatedData.basics = {};
         updatedData.basics[question] = value;
-        break; // source: [cite: 158, 159]
-      case "education": // source: [cite: 160]
+        break;
+      case "education":
         if (question === "more_education") break;
         if (!updatedData.education) updatedData.education = [];
-        if (question === "institution") { // source: [cite: 161]
+        if (question === "institution") {
           updatedData.education.push({ institution: value });
         } else {
-          const currentEduIndex = updatedData.education.length - 1; // source: [cite: 162]
-          if (currentEduIndex >= 0) { // source: [cite: 163]
+          const currentEduIndex = updatedData.education.length - 1;
+          if (currentEduIndex >= 0) {
             updatedData.education[currentEduIndex][question] = value;
           }
         }
         break;
-      case "technical_skills": // source: [cite: 165]
+      case "technical_skills":
          // The mapping and splitting logic is handled in the controller/gemini service now
          // This case might be simplified or handled differently based on geminiService output
          // Assuming geminiService provides the structured skills object
          if (!updatedData.skills) updatedData.skills = {};
          updatedData.skills = { ...updatedData.skills, ...value }; // value is the structured skills object
         break;
-      case "projects": // source: [cite: 168]
+      case "projects":
         if (question === "more_projects" || question === "more_points") break;
          if (!updatedData.projects) updatedData.projects = [];
-        if (question === "name") { // source: [cite: 169]
+        if (question === "name") {
           updatedData.projects.push({ name: value, points: [] });
-        } else if (question === "points") { // source: [cite: 170]
+        } else if (question === "points") {
           if (value.toLowerCase() !== "done") {
-             const currentProjIndex = updatedData.projects.length - 1; // source: [cite: 170]
-             if (currentProjIndex >= 0) { // source: [cite: 171]
+             const currentProjIndex = updatedData.projects.length - 1;
+             if (currentProjIndex >= 0) {
                updatedData.projects[currentProjIndex].points.push(value);
              }
           }
         } else {
-           const currentProjIndex = updatedData.projects.length - 1; // source: [cite: 172]
-           if (currentProjIndex >= 0) { // source: [cite: 173]
+           const currentProjIndex = updatedData.projects.length - 1;
+           if (currentProjIndex >= 0) {
              updatedData.projects[currentProjIndex][question] = value;
            }
         }
         break;
-      case "positions": // source: [cite: 175]
+      case "positions":
          if (question === "intro" || question === "more_positions" || question === "more_points") break;
          if (!updatedData.experience) updatedData.experience = [];
-         if (question === "organization") { // source: [cite: 176]
+         if (question === "organization") {
            updatedData.experience.push({ organization: value, points: [] });
-         } else if (question === "points") { // source: [cite: 177]
+         } else if (question === "points") {
            if (value.toLowerCase() !== "done") {
-             const currentPosIndex = updatedData.experience.length - 1; // source: [cite: 177]
-             if (currentPosIndex >= 0) { // source: [cite: 178]
+             const currentPosIndex = updatedData.experience.length - 1;
+             if (currentPosIndex >= 0) {
                updatedData.experience[currentPosIndex].points.push(value);
              }
            }
          } else {
-            const currentPosIndex = updatedData.experience.length - 1; // source: [cite: 179]
-            if (currentPosIndex >= 0) { // source: [cite: 180]
+            const currentPosIndex = updatedData.experience.length - 1;
+            if (currentPosIndex >= 0) {
               // Map 'company' to 'organization' if needed, or adjust structure
               const key = question === 'company' ? 'organization' : question;
               updatedData.experience[currentPosIndex][key] = value;
             }
          }
         break;
-      case "achievements": // source: [cite: 182]
+      case "achievements":
         if (question === "more_achievements") break;
          if (!updatedData.awards) updatedData.awards = [];
-        if (question === "intro" || question === 'achievement') { // source: [cite: 183] // Assuming 'intro' means add new
+        if (question === "intro" || question === 'achievement') { // Assuming 'intro' means add new
           updatedData.awards.push(value); // Assuming value is the achievement string or object
         }
         break;
-      default: // source: [cite: 185]
+      default:
         // Handle other cases or log an error if needed
         break;
     }
@@ -124,25 +123,25 @@ let resumeData = {
       let updatedData = JSON.parse(JSON.stringify(currentData)); // Work on a copy
   
       switch (category) {
-          case "personal_info": // source: [cite: 191, 249]
+          case "personal_info":
               updatedData.basics = formattedData;
               break;
-          case "education": // source: [cite: 191, 250]
+          case "education":
               updatedData.education = formattedData;
               break;
-          case "technical_skills": // source: [cite: 191, 251]
+          case "technical_skills":
               updatedData.skills = formattedData;
               break;
-          case "projects": // source: [cite: 192, 252]
+          case "projects":
               updatedData.projects = formattedData;
               break;
-          case "positions": // source: [cite: 193, 253]
+          case "positions":
               updatedData.experience = formattedData; // Map to 'experience'
               break;
-          case "achievements": // source: [cite: 194, 254]
+          case "achievements":
               updatedData.awards = formattedData; // Map to 'awards'
               break;
-          default: // source: [cite: 195]
+          default:
               console.warn(`Unhandled category in updateCategoryData: ${category}`);
               break;
       }

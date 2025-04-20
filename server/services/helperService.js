@@ -1,4 +1,3 @@
-// source: [cite: 6]
 // Helper function to map skill category names used in older endpoints
 function mapSkillCategory(questionKey) {
     const categoryMap = {
@@ -8,7 +7,7 @@ function mapSkillCategory(questionKey) {
       tools: "toolsPlatforms",           // Match resumeData structure
       apis: "apis",
     };
-    return categoryMap[questionKey] || questionKey; // source: [cite: 7]
+    return categoryMap[questionKey] || questionKey;
   }
   
   module.exports = {

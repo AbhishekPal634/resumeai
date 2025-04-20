@@ -75,8 +75,7 @@ const SecuritySettings = () => {
   };
 
   return (
-    <div>
-      <div className="space-y-12">
+    <div>      <div className="space-y-12">
         {/* Change Password Section */}
         <Section title="Change Password" icon={FiLock} noBorder>
           <form onSubmit={handlePasswordSubmit} className="max-w-lg">
@@ -112,9 +111,7 @@ const SecuritySettings = () => {
               Change Password
             </Button>
           </form>
-        </Section>
-
-        {/* Two-Factor Authentication */}
+        </Section>        {/* Two-Factor Authentication */}
         <Section className="pt-6 border-t border-gray-200 dark:border-gray-700">
           <ToggleSection
             icon={FiShield}
@@ -133,6 +130,33 @@ const SecuritySettings = () => {
               </Button>
             }
           />
+        </Section>
+
+        {/* Delete Account Section */}
+        <Section className="pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="max-w-lg">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center mb-4">
+              <FiLock className="mr-2 h-5 w-5 text-red-500" />
+              Delete Account
+            </h3>            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-100 dark:border-red-900/30">
+              <p className="mb-3 text-sm text-gray-700 dark:text-gray-300">
+                Deleting your account is permanent and cannot be undone. This action will:
+              </p>
+              <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1 list-disc ml-5">
+                <li>Remove all your resumes and cover letters</li>
+                <li>Remove your profile and account information</li>
+                <li>Cancel any active subscription plan</li>
+              </ul>
+            </div>
+            <Button 
+              type="button" 
+              variant="danger"
+              onClick={() => window.confirm("Are you sure you want to delete your account? This action cannot be undone.")}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+            >
+              Delete Account
+            </Button>
+          </div>
         </Section>
       </div>
     </div>

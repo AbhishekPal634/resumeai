@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiPhone, FiMapPin, FiInfo } from "react-icons/fi";
 
-const PersonalInformation = ({ userData, isEditing, onSave }) => {
-  const [formData, setFormData] = useState({
+const PersonalInformation = ({ userData, isEditing, onSave }) => {  const [formData, setFormData] = useState({
     email: userData.email,
     phone: userData.phone,
     location: userData.location,
-    about: userData.about,
   });
 
   const handleChange = (e) => {
@@ -77,19 +75,6 @@ const PersonalInformation = ({ userData, isEditing, onSave }) => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              About
-            </label>
-            <textarea
-              name="about"
-              value={formData.about}
-              onChange={handleChange}
-              rows={4}
-              className="w-full p-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-            />
-          </div>
-
           <div className="flex justify-end">
             <button
               type="submit"
@@ -137,15 +122,6 @@ const PersonalInformation = ({ userData, isEditing, onSave }) => {
                 {userData.location}
               </p>
             </div>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-            <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
-              Bio
-            </h4>
-            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-              {userData.about}
-            </p>
           </div>
         </div>
       )}

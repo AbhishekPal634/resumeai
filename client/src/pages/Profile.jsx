@@ -7,40 +7,25 @@ import DashboardLayout from "../components/layouts/DashboardLayout";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import PersonalInformation from "../components/profile/PersonalInformation";
 import ResumeActivity from "../components/profile/ResumeActivity";
-import SkillsSection from "../components/profile/SkillsSection";
 import AccountPlan from "../components/profile/AccountPlan";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
-
   // User data would come from context/API in a real app
   const [userData, setUserData] = useState({
     name: "Jessica Chen",
     email: "jessica.chen@example.com",
     phone: "+1 (555) 123-4567",
-    position: "Senior Product Designer",
-    company: "TechVision Inc.",
-    location: "San Francisco, CA",
-    about:
-      "Product designer with 6+ years of experience creating user-centered digital experiences for SaaS products. Passionate about solving complex problems through intuitive design.",
-    skills: [
-      "UI/UX Design",
-      "Product Strategy",
-      "User Research",
-      "Wireframing",
-      "Prototyping",
-      "Design Systems",
-    ],
-    resumeActivity: [
+    location: "San Francisco, CA",    resumeActivity: [
       {
         id: 1,
-        name: "Software Engineer",
+        name: "Software Engineer Resume",
         date: "Mar 15, 2025",
         status: "Updated",
       },
       {
         id: 2,
-        name: "Product Designer",
+        name: "Product Designer Cover Letter",
         date: "Feb 28, 2025",
         status: "Created",
       },
@@ -90,9 +75,7 @@ const Profile = () => {
               userData={userData}
               isEditing={isEditing}
               onSave={handleSaveProfile}
-            />
-
-            {/* Main Content - Two Column Layout */}
+            />            {/* Main Content - Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column */}
               <div className="lg:col-span-2 space-y-6">
@@ -107,12 +90,6 @@ const Profile = () => {
 
               {/* Right Column */}
               <div className="space-y-6">
-                <SkillsSection
-                  skills={userData.skills}
-                  isEditing={isEditing}
-                  onSave={(skills) => handleSaveProfile({ skills })}
-                />
-
                 <AccountPlan
                   plan={userData.plan}
                   memberSince={userData.memberSince}

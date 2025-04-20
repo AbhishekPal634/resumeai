@@ -5,21 +5,17 @@ import DashboardLayout from "../components/layouts/DashboardLayout";
 import SecuritySettings from "../components/settings/SecuritySettings";
 import NotificationSettings from "../components/settings/NotificationSettings";
 import AppearanceSettings from "../components/settings/AppearanceSettings";
-import PrivacySettings from "../components/settings/PrivacySettings";
 import PlanSettings from "../components/settings/PlanSettings";
 
 const Settings = () => {
   // Change default state to "security" since it's the default tab
   const [activeTab, setActiveTab] = useState("security");
-
   const tabs = [
     { id: "security", label: "Security" },
     { id: "notifications", label: "Notifications" },
     { id: "appearance", label: "Appearance" },
-    { id: "privacy", label: "Privacy" },
     { id: "plan", label: "Subscription" },
   ];
-
   const renderTabContent = () => {
     switch (activeTab) {
       case "security":
@@ -28,8 +24,6 @@ const Settings = () => {
         return <NotificationSettings />;
       case "appearance":
         return <AppearanceSettings />;
-      case "privacy":
-        return <PrivacySettings />;
       case "plan":
         return <PlanSettings />;
       default:

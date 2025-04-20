@@ -22,16 +22,18 @@ const Pricing = () => {
           <p className="mt-6 text-slate-400">No hidden fees. Cancel anytime.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {[
             {
               title: "Free",
               description: "For getting started",
-              price: "$0",
+              price: "₹0",
               features: [
-                "1 resume template",
-                "Basic AI suggestions",
-                "Download as PDF",
+                "1 active resume",
+                "Basic AI suggestions (5/day)",
+                "2 resume templates",
+                "Auto-generated professional summary",
+                "Download as PDF (with watermark)",
               ],
               cta: "Get Started",
               highlight: false,
@@ -39,31 +41,20 @@ const Pricing = () => {
             {
               title: "Pro",
               description: "For job seekers",
-              price: "$9",
+              price: "₹29",
               features: [
-                "All free features",
-                "15+ premium templates",
-                "Advanced AI recommendations",
-                "Cover letter generation",
-                "Application tracking",
+                "All Free features",
+                "Up to 5 resumes",
+                "Up to 2 cover letters",
+                "Premium resume templates",
+                "Advanced AI content optimization",
+                "Cover letter generation using AI",
+                "Download PDF without watermark",
+                "Priority feature access",
               ],
               cta: "Start Pro",
               highlight: true,
-            },
-            {
-              title: "Enterprise",
-              description: "For teams",
-              price: "$29",
-              features: [
-                "All Pro features",
-                "Team collaboration",
-                "Branded templates",
-                "Analytics dashboard",
-                "Priority support",
-              ],
-              cta: "Contact Sales",
-              highlight: false,
-            },
+            }
           ].map((plan, index) => (
             <motion.div
               key={index}
@@ -100,7 +91,7 @@ const Pricing = () => {
                 <div className="text-3xl font-bold text-white mb-6">
                   {plan.price}
                   <span className="text-lg text-slate-400">
-                    {plan.price !== "$0" ? "/mo" : ""}
+                    {plan.price !== "₹0" ? "/mo" : ""}
                   </span>
                 </div>
                 <ul className="space-y-3 mb-8">
@@ -128,7 +119,7 @@ const Pricing = () => {
                 {" "}
                 {/* Button container pushed to bottom */}
                 <Link
-                  to={plan.cta === "Contact Sales" ? "/contact" : "/signup"}
+                  to={"/signup"}
                   className={`block w-full py-2 px-4 text-center text-sm 
                     ${
                       plan.highlight

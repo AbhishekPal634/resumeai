@@ -11,48 +11,37 @@ import AddPaymentMethodModal from "../ui/AddPaymentMethodModal";
 
 const plans = [
   {
-    id: "basic",
-    name: "Basic",
+    id: "free",
+    name: "Free",
     price: 0,
     period: "month",
-    description: "Everything you need to get started",
+    description: "For getting started",
     features: [
-      "Up to 5 resume versions",
-      "Basic templates",
-      "Export to PDF",
-      "Email support",
+      "1 active resume",
+      "Basic AI suggestions (5/day)",
+      "2 resume templates",
+      "Auto-generated professional summary",
+      "Download as PDF (with watermark)",
     ],
     recommended: false,
   },
   {
     id: "pro",
-    name: "Professional",
-    price: 15,
-    period: "month",
-    description: "For serious job seekers",
-    features: [
-      "Unlimited resume versions",
-      "Premium templates",
-      "AI-powered suggestions",
-      "Priority support",
-      "Analytics and insights",
-    ],
-    recommended: true,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
+    name: "Pro",
     price: 29,
     period: "month",
-    description: "For teams and organizations",
+    description: "For job seekers",
     features: [
-      "Everything in Professional",
-      "Team collaboration",
-      "Custom branding",
-      "API access",
-      "Dedicated support",
+      "All Free features",
+      "Up to 5 resumes",
+      "Up to 2 cover letters",
+      "Premium resume templates",
+      "Advanced AI content optimization",
+      "Cover letter generation using AI",
+      "Download PDF without watermark",
+      "Priority feature access",
     ],
-    recommended: false,
+    recommended: true,
   },
 ];
 
@@ -77,7 +66,7 @@ const BillingHistory = ({ invoices }) => {
               {invoice.date}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-              ${invoice.amount}
+              ₹{invoice.amount}
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
               <StatusBadge variant="success">{invoice.status}</StatusBadge>
@@ -106,7 +95,7 @@ const CurrentPlanSection = ({ currentPlan, onChangePlan }) => (
           {currentPlan.name}
         </h4>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          ${currentPlan.price}/month
+          ₹{currentPlan.price}/month
         </p>
         <div className="mt-2">
           <StatusBadge variant="success">Active</StatusBadge>
@@ -155,7 +144,7 @@ const PaymentMethods = ({
 );
 
 const PlanSettings = () => {
-  const [currentPlan, setCurrentPlan] = useState("basic");
+  const [currentPlan, setCurrentPlan] = useState("free");
   const [paymentMethods, setPaymentMethods] = useState([
     {
       id: 1,
@@ -177,13 +166,13 @@ const PlanSettings = () => {
     {
       id: 1,
       date: "2024-03-01",
-      amount: "15.00",
+      amount: "29.00",
       status: "Paid",
     },
     {
       id: 2,
       date: "2024-02-01",
-      amount: "15.00",
+      amount: "29.00",
       status: "Paid",
     },
   ]);
@@ -229,7 +218,7 @@ const PlanSettings = () => {
       </Section>
 
       <Section title="Available Plans">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {plans.map((plan) => (
             <PricingCard
               key={plan.id}

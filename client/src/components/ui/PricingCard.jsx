@@ -9,13 +9,12 @@ const PricingCard = ({ plan, isActive, onSelect }) => (
         : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
     }`}
   >
-    <div className="flex-1">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+    <div className="flex-1">      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
         {plan.name}
       </h3>
       <div className="mt-2">
         <span className="text-3xl font-bold text-gray-900 dark:text-white">
-          ${plan.price}
+          ₹{plan.price}
         </span>
         <span className="text-gray-500 dark:text-gray-400">/month</span>
       </div>

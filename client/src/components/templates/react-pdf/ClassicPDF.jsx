@@ -167,26 +167,15 @@ const ClassicPDF = ({ resume }) => {
           )}
 
           {/* 3. Skills */}
-          {skills && Object.values(skills).some(skill => Array.isArray(skill) && skill.length > 0) && (
+          {Array.isArray(skills) && skills.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Technical Skills</Text>
-              {[
-                { key: "programmingLanguages", title: "Languages" },
-                { key: "librariesFrameworks", title: "Frameworks" },
-                { key: "databases", title: "Databases" },
-                { key: "toolsPlatforms", title: "Tools & Platforms" },
-                { key: "apis", title: "APIs" },
-                { key: "devTools", title: "Developer Tools" },
-                { key: "cloud", title: "Cloud Services" },
-              ].map(
-                ({ key, title }) =>
-                  skills[key]?.length > 0 && (
-                    <View key={key} style={styles.skillCategory}>
-                      <Text style={styles.skillTitle}>{title}: </Text>
-                      <Text>{skills[key].join(", ")}</Text>
-                    </View>
-                  )
-              )}
+              <Text style={styles.sectionTitle}>Skills</Text>
+              {skills.map((cat, idx) => (
+                <View key={idx} style={styles.skillCategory}>
+                  <Text style={styles.skillTitle}>{cat.key}: </Text>
+                  <Text>{cat.values.join(", ")}</Text>
+                </View>
+              ))}
             </View>
           )}
 

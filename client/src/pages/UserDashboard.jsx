@@ -32,12 +32,12 @@ const UserDashboard = () => {
   const displayName = user?.firstName ? user.firstName : user?.email ? user.email.split('@')[0] : 'User';
 
   const handleCreateResume = () => {
-    navigate("/chatbot");
+    navigate("/resume/templates");
   };
 
-  const handleUpdateResume = () => {
-    navigate("/resume-editor");
-  };
+  // const handleUpdateResume = () => {
+  //   navigate("/resume-editor");
+  // };
 
   const handleEditResume = (resume) => {
     console.log("Editing resume:", resume);

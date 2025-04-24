@@ -129,39 +129,12 @@ const ModernTemplate = ({ resume }) => {
           </Section>
         )}
 
-        {/* Technical Skills Section */}
-        {hasSkills && (
-          <Section title="Technical Skills">
-            {skills.programmingLanguages && skills.programmingLanguages.length > 0 && (
-              <SkillCategory
-                title="Programming Languages"
-                skills={skills.programmingLanguages}
-              />
-            )}
-            {skills.librariesFrameworks && skills.librariesFrameworks.length > 0 && (
-              <SkillCategory
-                title="Libraries & Frameworks"
-                skills={skills.librariesFrameworks}
-              />
-            )}
-            {skills.databases && skills.databases.length > 0 && (
-              <SkillCategory
-                title="Databases"
-                skills={skills.databases}
-              />
-            )}
-            {skills.toolsPlatforms && skills.toolsPlatforms.length > 0 && (
-              <SkillCategory
-                title="Tools & Platforms"
-                skills={skills.toolsPlatforms}
-              />
-            )}
-            {skills.apis && skills.apis.length > 0 && (
-              <SkillCategory
-                title="APIs"
-                skills={skills.apis}
-              />
-            )}
+        {/* Skills Section */}
+        {Object.keys(skills).length > 0 && (
+          <Section title="Skills">
+            {Object.keys(skills).map((key, idx) => (
+              <SkillCategory key={idx} title={key} skills={skills[key]} />
+            ))}
           </Section>
         )}
 

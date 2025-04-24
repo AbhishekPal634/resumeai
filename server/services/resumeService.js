@@ -11,13 +11,7 @@ let resumeData = {
     },
     experience: [],
     education: [],
-    skills: {
-      programmingLanguages: [],
-      librariesFrameworks: [],
-      databases: [],
-      toolsPlatforms: [],
-      apis: [],
-    },
+    skills: [],
     projects: [],
     awards: [],
   };
@@ -54,13 +48,10 @@ let resumeData = {
           }
         }
         break;
-      case "technical_skills":
-         // The mapping and splitting logic is handled in the controller/gemini service now
-         // This case might be simplified or handled differently based on geminiService output
-         // Assuming geminiService provides the structured skills object
-         if (!updatedData.skills) updatedData.skills = {};
-         updatedData.skills = { ...updatedData.skills, ...value }; // value is the structured skills object
-        break;
+      case "skills":
+         // Gemini now provides an array of { key, values } objects for skills
+         updatedData.skills = Array.isArray(value) ? value : [];
+         break;
       case "projects":
         if (question === "more_projects" || question === "more_points") break;
          if (!updatedData.projects) updatedData.projects = [];
@@ -129,7 +120,7 @@ let resumeData = {
           case "education":
               updatedData.education = formattedData;
               break;
-          case "technical_skills":
+          case "skills":
               updatedData.skills = formattedData;
               break;
           case "projects":

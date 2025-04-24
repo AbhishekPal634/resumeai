@@ -159,23 +159,12 @@ const ClassicTemplate = ({ resume }) => {
         </Section>
       )}
 
-      {/* Technical Skills */}
-      {skills && Object.values(skills).some(skill => Array.isArray(skill) && skill.length > 0) && (
-        <Section title="Technical Skills">
-          {[
-            { key: "programmingLanguages", title: "Languages" },
-            { key: "librariesFrameworks", title: "Frameworks" },
-            { key: "devTools", title: "Developer Tools" },
-            { key: "databases", title: "Databases" },
-            { key: "cloud", title: "Cloud Services" },
-            { key: "toolsPlatforms", title: "Tools & Platforms" },
-            { key: "apis", title: "APIs" },
-          ].map(
-            ({ key, title }) =>
-              skills[key]?.length > 0 && (
-                <SkillCategory key={key} title={title} skills={skills[key]} />
-              )
-          )}
+      {/* Skills */}
+      {Array.isArray(skills) && skills.length > 0 && (
+        <Section title="Skills">
+          {skills.map((cat, idx) => (
+            <SkillCategory key={idx} title={cat.key} skills={cat.values} />
+          ))}
         </Section>
       )}
 

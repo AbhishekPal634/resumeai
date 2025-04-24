@@ -422,25 +422,19 @@ async function processCategoryWithGemini(userInput, category) {
               Do not include any explanations, just the JSON array.
             `;
             break;
-         case 'technical_skills':
+         case 'skills':
             prompt = `
-              You are a resume assistant helping to categorize technical skills from user input.
-              Parse the following text and categorize the skills into appropriate categories.
+              You are a resume assistant. The user will provide a free-form list of their skills (technical, soft, creative, language, management, etc.), separated by commas or spaces. Your job is to automatically categorize these skills into logical categories. 
               User input: "${normalizedInput}"
-              Return ONLY a JSON object with the following structure:
-              {
-                "programmingLanguages": ["Language1", "Language2", ...],
-                "librariesFrameworks": ["Framework1", "Library1", ...],
-                "databases": ["Database1", "Database2", ...],
-                "toolsPlatforms": ["Tool1", "Platform1", ...],
-                "apis": ["API1", "API2", ...]
-              }
-              Ensure that:
-              1. You include all relevant skills mentioned by the user
-              2. You use industry-standard terminology for all skills (e.g., "JavaScript" not "JS", "Amazon Web Services" not just "AWS")
-              3. You categorize each skill appropriately
-              4. You list the most important/relevant skills first in each category
-              Do not include any explanations, just the JSON object.
+              Return ONLY a JSON array of objects, each with a 'key' (category name, e.g., 'Programming Languages', 'Soft Skills', 'Design Tools', etc.) and a 'values' array (the skills in that category). Example:
+              [
+                { "key": "Programming Languages", "values": ["Python", "JavaScript"] },
+                { "key": "Soft Skills", "values": ["Teamwork", "Leadership"] },
+                { "key": "Design Tools", "values": ["Figma", "Photoshop"] }
+              ]
+              - Use industry-standard terminology for all skills (e.g., "JavaScript" not "JS").
+              - Categorize each skill appropriately. If a skill does not fit a common category, create a suitable category name.
+              - Do not include any explanations, just the JSON array.
             `;
             break;
         case 'projects':

@@ -81,9 +81,9 @@ const resumeSections = {
     title: "Education",
     prompt: "Tell me about your educational background. Include details like your university/college name, degree type (e.g., Bachelor of Science), field of study, years of attendance, and GPA if you'd like. If you have multiple degrees, feel free to include them all."
   },
-  technical_skills: {
-    title: "Technical Skills",
-    prompt: "What technical skills do you have? This could include programming languages, frameworks, libraries, databases, tools, platforms, and APIs you're familiar with. I'll organize these into appropriate categories for your resume."
+  skills: {
+    title: "Skills",
+    prompt: "List your skills, separated by commas or spaces. You can include any skills you have—technical, creative, language, management, or others. Just type them out in any order. I'll organize them into categories for your resume automatically."
   },
   projects: {
     title: "Projects",

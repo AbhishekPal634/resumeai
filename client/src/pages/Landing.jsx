@@ -1,6 +1,4 @@
-import React from "react"; // Removed useEffect
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import React from "react"; 
 import Navbar from "../components/landing/Navbar";
 import Hero from "../components/landing/Hero";
 import Features from "../components/landing/Features";
@@ -11,13 +9,6 @@ import Footer from "../components/landing/Footer";
 import Background from "../components/landing/Background";
 
 const Landing = () => {
-  // Removed token, loading, and navigate from useAuth and useNavigate
-
-  // Removed the useEffect hook that redirected logged-in users
-
-  // Removed the loading state check
-
-  // Render the landing page content directly
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 overflow-hidden">
       <Background />

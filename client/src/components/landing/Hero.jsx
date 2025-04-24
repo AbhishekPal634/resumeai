@@ -109,7 +109,7 @@ const Hero = () => {
 
             <div className="relative backdrop-blur-sm bg-slate-900/90 p-1 rounded-3xl border border-indigo-500/20 z-10">
               <img
-                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=800"
+                src="images/hero_image.png"
                 alt="Resume Builder"
                 className="rounded-2xl shadow-lg"
               />

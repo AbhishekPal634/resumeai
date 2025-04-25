@@ -38,7 +38,7 @@ const ClassicTemplate = ({ resume }) => {
           {basics.name}
         </h1>
         <div className="text-[11px] text-gray-600 flex items-center justify-center space-x-2 flex-wrap">
-          {[basics.phone, basics.email, basics.linkedin, basics.github]
+          {[basics.phone, basics.location, basics.email, basics.linkedin, basics.github]
             .filter(Boolean)
             .map((item, index, arr) => (
               <React.Fragment key={index}>

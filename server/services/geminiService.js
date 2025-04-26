@@ -384,6 +384,7 @@ async function processCategoryWithGemini(userInput, category) {
             prompt = `
                You are a resume assistant helping to extract personal information from user input.
                Parse the following text and extract the personal information in a structured format.
+               If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
                User input: "${normalizedInput}"
                Return ONLY a JSON object with the following structure:
                {
@@ -424,16 +425,18 @@ async function processCategoryWithGemini(userInput, category) {
             break;
          case 'skills':
             prompt = `
-              You are a resume assistant. The user will provide a free-form list of their skills (technical, soft, creative, language, management, etc.), separated by commas or spaces. Your job is to automatically categorize these skills into logical categories. 
+              You are a resume assistant. The user will provide a free-form list of their skills (technical, soft, creative, language, management, etc.), separated by commas or spaces. Your job is to group these skills into as FEW broad, logical categories as possible.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
               User input: "${normalizedInput}"
-              Return ONLY a JSON array of objects, each with a 'key' (category name, e.g., 'Programming Languages', 'Soft Skills', 'Design Tools', etc.) and a 'values' array (the skills in that category). Example:
+              Return ONLY a JSON array of objects, each with a 'key' (category name, e.g., 'Programming', 'Tools', 'Soft Skills', 'Languages') and a 'values' array (the skills in that category). Example:
               [
-                { "key": "Programming Languages", "values": ["Python", "JavaScript"] },
-                { "key": "Soft Skills", "values": ["Teamwork", "Leadership"] },
-                { "key": "Design Tools", "values": ["Figma", "Photoshop"] }
+                { "key": "Programming", "values": ["Python", "JavaScript"] },
+                { "key": "Tools", "values": ["Figma", "Photoshop"] },
+                { "key": "Soft Skills", "values": ["Teamwork", "Leadership"] }
               ]
               - Use industry-standard terminology for all skills (e.g., "JavaScript" not "JS").
-              - Categorize each skill appropriately. If a skill does not fit a common category, create a suitable category name.
+              - Only create a new category if a skill truly does not fit in an existing broad group.
+              - Your goal is to keep the number of categories to a minimum and avoid over-categorization.
               - Do not include any explanations, just the JSON array.
             `;
             break;
@@ -441,6 +444,7 @@ async function processCategoryWithGemini(userInput, category) {
         prompt = `
             You are a resume assistant helping to extract project information from user input.
             Parse the following text, which may contain details for one or more projects, and extract the information into a structured format.
+            If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
             User input: "${normalizedInput}"
 
             Return ONLY a JSON array where each object represents a project and has the following structure:
@@ -465,10 +469,11 @@ async function processCategoryWithGemini(userInput, category) {
             Do not include any explanations outside the JSON array. Just return the valid JSON array.
         `;
         break;
-        case 'positions':
+        case 'experience':
             prompt = `
               You are a resume assistant helping to extract work experience information from user input.
               Parse the following text and extract the work experience information in a structured format.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
               User input: "${normalizedInput}"
               Return ONLY a JSON array with the following structure:
               [
@@ -495,8 +500,9 @@ async function processCategoryWithGemini(userInput, category) {
             break;
          case 'achievements':
             prompt = `
-              You are a resume assistant helping to extract achievements, awards, and certifications from user input.
+              You are a resume assistant helping to extract achievements from user input.
               Parse the following text and extract the achievements information in a structured format.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
               User input: "${normalizedInput}"
               Return ONLY a JSON array with the following structure:
               [
@@ -514,6 +520,59 @@ async function processCategoryWithGemini(userInput, category) {
               3. Include relevant industry-specific terminology
               4. Mention skills or competencies demonstrated by the achievement
               5. Make each summary 1-2 sentences long with specific details
+              Do not include any explanations, just the JSON array.
+            `;
+            break;
+        case 'languages':
+            prompt = `
+              You are a resume assistant helping to extract language proficiency information from user input.
+              Parse the following text and extract the languages and proficiency levels in a structured format.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
+              User input: "${normalizedInput}"
+              Return ONLY a JSON array with the following structure:
+              [
+                { "language": "Language Name", "fluency": "Fluency Level (e.g., Native, Fluent, Intermediate, Beginner)" }
+                // Additional entries if provided
+              ]
+              Do not include any explanations, just the JSON array.
+            `;
+            break;
+        case 'volunteer':
+            prompt = `
+              You are a resume assistant helping to extract volunteer experience information from user input.
+              Parse the following text and extract the volunteer experience in a structured format.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
+              User input: "${normalizedInput}"
+              Return ONLY a JSON array with the following structure:
+              [
+                {
+                  "organization": "Organization Name",
+                  "position": "Role Title",
+                  "startDate": "Start Date (Month Year)",
+                  "endDate": "End Date (Month Year) or 'Present'",
+                  "summary": "Brief summary of the role or key responsibilities"
+                }
+                // Additional entries if provided
+              ]
+              Do not include any explanations, just the JSON array.
+            `;
+            break;
+        case 'publications':
+            prompt = `
+              You are a resume assistant helping to extract publication information from user input.
+              Parse the following text and extract the publication details in a structured format.
+              If you do not know a value, just write exactly whatever information is given. Do NOT ask for missing information, invent data, or add placeholders like [if known from context, otherwise leave as is], or mention anything irrelevant.
+              User input: "${normalizedInput}"
+              Return ONLY a JSON array with the following structure:
+              [
+                {
+                  "title": "Publication Title",
+                  "publisher": "Publisher/Journal Name",
+                  "date": "Date published (Month Year)",
+                  "summary": "Brief summary or description of the publication"
+                }
+                // Additional entries if provided
+              ]
               Do not include any explanations, just the JSON array.
             `;
             break;

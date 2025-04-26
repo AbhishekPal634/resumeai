@@ -22,24 +22,25 @@ const ResumeSchema = new mongoose.Schema({
       startDate: String,
       endDate: String,
       location: String,
-      description: String,
+      highlights: [String], // bullet points
       techStack: [String]
     }
   ],
   education: [
     {
       institution: String,
-      degree: String,
+      studyType: String, // e.g., 'B.Tech', 'M.Sc.'
+      area: String, // Major/Field
       startDate: String,
       endDate: String,
       location: String,
-      description: String
+      gpa: String
     }
   ],
   skills: [
     {
-      key: String,
-      values: [String]
+      key: String, // e.g., 'Programming Languages', 'Frameworks', etc., or just skill name
+      value: String // e.g., 'Advanced', 'Intermediate', etc. or description/level
     }
   ],
   projects: [
@@ -47,15 +48,38 @@ const ResumeSchema = new mongoose.Schema({
       title: String,
       techStack: [String],
       link: String,
-      description: String
+      description: String,
+      highlights: [String] // bullet points
     }
   ],
-  awards: [
+  achievements: [
     {
       title: String,
       date: String,
-      awardedBy: String,
-      description: String
+      awarder: String,
+      summary: String
+    }
+  ],
+  publications: [
+    {
+      name: String,
+      publisher: String,
+      releaseDate: String
+    }
+  ],
+  languages: [
+    {
+      key: String, // e.g., 'English'
+      value: String // e.g., 'Fluent', 'Native'
+    }
+  ],
+  volunteer: [
+    {
+      organization: String,
+      position: String,
+      startDate: String,
+      endDate: String,
+      summary: String
     }
   ]
 }, { timestamps: true });

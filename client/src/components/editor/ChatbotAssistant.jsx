@@ -1,103 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaRobot, FaUser, FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import { processUserInput, processCategory, generateSummary } from "../../utils/api";
-import axios from 'axios';
-
-const ChatMessage = ({ message, formatTime }) => (
-  <div
-    className={`flex items-start gap-3 ${
-      message.sender === "user" ? "flex-row-reverse" : ""
-    }`}
-  >
-    {/* Avatar */}
-    <div
-      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-        message.sender === "user"
-          ? "bg-gradient-to-r from-indigo-500 to-violet-500"
-          : "bg-gradient-to-r from-pink-500 to-rose-500"
-      } shadow-sm`}
-    >
-      {message.sender === "user" ? (
-        <FaUser className="w-3.5 h-3.5 text-white" />
-      ) : (
-        <FaRobot className="w-3.5 h-3.5 text-white" />
-      )}
-    </div>
-
-    {/* Message bubble */}
-    <div
-      className={`group relative max-w-[75%] rounded-2xl px-4 py-2.5 ${
-        message.sender === "user"
-          ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white rounded-tr-none"
-          : "bg-white dark:bg-slate-800 shadow-sm rounded-tl-none border border-slate-200 dark:border-slate-700"
-      }`}
-    >
-      <p
-        className={`text-sm leading-relaxed ${
-          message.sender === "bot" ? "text-slate-700 dark:text-slate-200" : ""
-        }`}
-      >
-        {message.text}
-      </p>
-      <span
-        className={`text-[10px] mt-1 block opacity-60 transition-opacity group-hover:opacity-100 ${
-          message.sender === "user"
-            ? "text-white"
-            : "text-slate-500 dark:text-slate-400"
-        }`}
-      >
-        {formatTime(message.timestamp)}
-      </span>
-    </div>
-  </div>
-);
-
-const TypingIndicator = () => (
-  <div className="flex items-start gap-3">
-    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center shadow-sm">
-      <FaRobot className="w-3.5 h-3.5 text-white" />
-    </div>
-    <div className="bg-white dark:bg-slate-800 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm border border-slate-200 dark:border-slate-700">
-      <div className="flex space-x-1">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-// Define the resume sections and their prompts for entire section input
-const resumeSections = {
-  personal_info: {
-    title: "Personal Information",
-    prompt: "Please tell me about yourself. I need your full name, email address, phone number, location, and optionally your LinkedIn and GitHub URLs. If you'd like to include a professional summary, please share that as well."
-  },
-  education: {
-    title: "Education",
-    prompt: "Tell me about your educational background. Include details like your university/college name, degree type (e.g., Bachelor of Science), field of study, years of attendance, and GPA if you'd like. If you have multiple degrees, feel free to include them all."
-  },
-  skills: {
-    title: "Skills",
-    prompt: "List your skills, separated by commas or spaces. You can include any skills you have—technical, creative, language, management, or others. Just type them out in any order. I'll organize them into categories for your resume automatically."
-  },
-  projects: {
-    title: "Projects",
-    prompt: "Tell me about some projects you've worked on. Include the project name, a brief description, and key achievements or features for each project. I'll format these professionally for your resume."
-  },
-  positions: {
-    title: "Work Experience",
-    prompt: "Please share your work experience. Include details like company names, your job titles, dates of employment, and your key responsibilities or achievements in each position."
-  },
-  achievements: {
-    title: "Awards & Achievements",
-    prompt: "What notable achievements, awards, certifications, or publications do you have? Include the title, date received, and the organization that gave the award or recognition if applicable."
-  }
-};
+import resumeSections from "./ChatSectionPrompts";
+import ChatMessage from "./ChatMessage";
+import TypingIndicator from "./TypingIndicator";
 
 // Initial empty resume structure
 const emptyResume = {
@@ -112,15 +18,12 @@ const emptyResume = {
   },
   experience: [],
   education: [],
-  skills: {
-    programmingLanguages: [],
-    librariesFrameworks: [],
-    databases: [],
-    toolsPlatforms: [],
-    apis: [],
-  },
+  skills: [], // Array of { key, value }
+  languages: [], // Array of { key, value }
   projects: [],
-  awards: [],
+  achievements: [],
+  publications: [],
+  volunteer: []
 };
 
 const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData }) => {
@@ -173,24 +76,23 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
                   currentResumeData.basics.email || 
                   currentResumeData.basics.phone);
         case 'education':
-          return currentResumeData.education && 
-                 currentResumeData.education.length > 0;
-        case 'technical_skills':
-          return currentResumeData.skills && 
-                 (currentResumeData.skills.programmingLanguages?.length > 0 || 
-                  currentResumeData.skills.librariesFrameworks?.length > 0 || 
-                  currentResumeData.skills.databases?.length > 0 || 
-                  currentResumeData.skills.toolsPlatforms?.length > 0 || 
-                  currentResumeData.skills.apis?.length > 0);
+          return currentResumeData.education && currentResumeData.education.length > 0;
+        case 'skills':
+          return currentResumeData.skills && currentResumeData.skills.length > 0;
+        case 'languages':
+          return currentResumeData.languages && currentResumeData.languages.length > 0;
         case 'projects':
-          return currentResumeData.projects && 
-                 currentResumeData.projects.length > 0;
-        case 'positions':
-          return currentResumeData.experience && 
-                 currentResumeData.experience.length > 0;
+          return currentResumeData.projects && currentResumeData.projects.length > 0;
+        case 'experience':
+          return currentResumeData.experience && currentResumeData.experience.length > 0;
         case 'achievements':
-          return currentResumeData.awards && 
-                 currentResumeData.awards.length > 0;
+          return currentResumeData.achievements && currentResumeData.achievements.length > 0;
+        case 'publications':
+          return currentResumeData.publications && currentResumeData.publications.length > 0;
+        case 'volunteer':
+          return currentResumeData.volunteer && currentResumeData.volunteer.length > 0;
+        case 'summary':
+          return currentResumeData.basics && currentResumeData.basics.summary && currentResumeData.basics.summary.trim() !== '';
         default:
           return false;
       }
@@ -413,11 +315,11 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
     setAwaitingManualSummary(false);
   };
 
+  // Handle sending a message
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (input.trim() === "" || isTyping) return;
 
-    // Add user message
     const userMessage = {
       sender: "user",
       text: input,
@@ -428,18 +330,30 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
     setInput("");
     setIsTyping(true);
 
+    // If user types 'skip', move to next section immediately
+    if (input.trim().toLowerCase() === "skip") {
+      setTimeout(() => {
+        setIsTyping(false);
+        moveToNextSection();
+      }, 500);
+      return;
+    }
+
     try {
       // Check if all sections are completed
-      const allSectionsCompleted = 
-        isSectionCompleted("personal_info") && 
-        isSectionCompleted("education") && 
-        isSectionCompleted("technical_skills") && 
-        isSectionCompleted("projects") && 
-        isSectionCompleted("positions") && 
-        isSectionCompleted("achievements");
-        
+      const allSectionsCompleted =
+        isSectionCompleted("personal_info") &&
+        isSectionCompleted("education") &&
+        isSectionCompleted("skills") &&
+        isSectionCompleted("languages") &&
+        isSectionCompleted("projects") &&
+        isSectionCompleted("experience") &&
+        isSectionCompleted("achievements") &&
+        isSectionCompleted("publications") &&
+        isSectionCompleted("volunteer");
+
       if (allSectionsCompleted) {
-        // All sections are complete, handle free-form conversation
+        // All sections are complete, handle summary/free-form
         if (awaitingManualSummary) {
           processManualSummary(input);
         } else {
@@ -449,83 +363,58 @@ const ChatbotAssistant = ({ onClose, activeSection, resumeData, updateResumeData
             "general",
             currentResumeData
           );
-          
           const botMessage = {
             sender: "bot",
             text: response.message || "I've processed your request.",
             timestamp: new Date(),
           };
-          
           setMessages(prev => [...prev, botMessage]);
-          
           if (response.resumeData && !response.error) {
-            console.log("Updating resume data from free-form input:", response.resumeData);
             setCurrentResumeData(response.resumeData);
-            if (updateResumeData) {
-              updateResumeData(response.resumeData);
-            }
+            if (updateResumeData) updateResumeData(response.resumeData);
           }
         }
       } else {
         // Process the entire section at once
-        console.log("Processing category:", currentSection, "with input:", input);
         const response = await processCategory(
           input,
           currentSection,
           currentResumeData
         );
-        
-        // Add bot response
         const botMessage = {
           sender: "bot",
           text: response.message || "Information saved successfully.",
           timestamp: new Date(),
         };
-        
         setMessages(prev => [...prev, botMessage]);
-        
-        // Update the resume data
         if (response.resumeData && !response.error) {
-          console.log("Received updated resume data:", response.resumeData);
           setCurrentResumeData(response.resumeData);
-          if (updateResumeData) {
-            console.log("Updating parent component with new resume data");
-            updateResumeData(response.resumeData);
-          }
-          
-          // Move to next section - don't add any messages here, they'll be added in moveToNextSection
+          if (updateResumeData) updateResumeData(response.resumeData);
           moveToNextSection();
         } else {
-          // If there was an error, ask for the section input again
-          console.error("Error in response:", response.error);
           setTimeout(() => {
             const retryMessage = {
               sender: "bot",
               text: "I couldn't process that information correctly. Please try again following the format:",
               timestamp: new Date(),
             };
-            
             const promptMessage = {
               sender: "bot",
               text: resumeSections[currentSection].prompt,
               timestamp: new Date(Date.now() + 100),
             };
-            
             setMessages(prev => [...prev, retryMessage, promptMessage]);
           }, 1000);
         }
       }
     } catch (error) {
       console.error("Error processing message:", error);
-      // Add error message
       const errorMessage = {
         sender: "bot",
         text: "Sorry, I encountered an error processing your request. Please try again.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
-      
-      // Ask for the section input again
       setTimeout(() => {
         const promptMessage = {
           sender: "bot",
